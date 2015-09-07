@@ -73,13 +73,14 @@ static MapCheckpoints mapCheckpoints =
             ( 195000, uint256("0x000000000000aca7ba8d2baa4327b64000d225acf89120cfeae4a695cb6faf91"))
             ( 200000, uint256("0x0000000000020bcc4d119515371240d0938b01439ce45195858a1907e845fbfd"))
             ( 205000, uint256("0x6c1c0b42de8a38a9e12abb7764c8a29166d6cbdd9d2557b453231c70097b3d1f"))
-        		//Checkpoints added 1/19/14
-            ( 205000, uint256("0x"))
-            ( 205000, uint256("0x"))
-            ( 205000, uint256("0x"))
-            ( 205000, uint256("0x"))
-        
-        
+        		//Checkpoints added 7/09/15  madross
+            ( 300000, uint256("0x990254fedcbcd0e6849139b81354a0a35ff249f544d7487b48913d8a20e1ae7a"))
+            ( 400000, uint256("0x000000000006d0361dced1e5e55af89b0b6e390c3cf31a4670e7ea065fde02e5"))
+            ( 500000, uint256("0xcc578ddcdb9219ba5a982320a33f0d079e662d9035fb77e82faef2d7f19c8a09"))
+            ( 600000, uint256("0x4cfaf0b4b0715ee29db09dc0a64d8d2b448504daa6f835cd79f6e1766d29d41f"))
+            ( 700000, uint256("0x000000000002963011deed2a29efb8c69196940a3c5677d259e615ce7c29a8f3"))
+            ( 800000, uint256("0x1ef82de5c91dd6a021f53292b989bb2f0bb04d0ae49667e47cec94553a8b1569"))
+            ( 900000, uint256("0x07c0a3bc95c8a06711d4877573e855d9abcb7e516f999ee7d983e71436681de1"))
         ;
 
 
