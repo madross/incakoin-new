@@ -92,7 +92,7 @@
        </property>
        <property name="text">
         <string>Copyright © 2013 The BM Group
-         http://www.IncaKoin.com</string>
+         http://www.IncaKoin.info</string>
        </property>
        <property name="textInteractionFlags">
         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
