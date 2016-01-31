@@ -42,7 +42,10 @@ static CBigNum bnProofOfStakeHardLimit(~uint256(0) >> 30); // disabled temporari
 static CBigNum bnProofOfWorkLimitTestNet(~uint256(0) >> 16);
 static CBigNum bnProofOfStakeLimitTestNet(~uint256(0) >> 20);
 
-unsigned int nStakeMinAge = 60 * 60 * 24 * 90; // minimum age for coin age
+unsigned int nForkTime = 1462406400; // 5-5-2016 00:00:00 GMT
+
+unsigned int nStakeMinAgeOld = 60 * 60 * 24 * 90; // Old minimum age for coin age
+unsigned int nStakeMinAgeNew = 60 * 60 * 24 * 35; // New minimum age for coin age
 unsigned int nStakeMaxAge = 60 * 60 * 24 * 180; // stake age of full weight
 unsigned int nStakeTargetSpacing = 60; // 60 seconds block spacing
 const int64 nChainStartTime = 1377538838; 
@@ -955,8 +958,8 @@ int64 nSubsidy = 420 * COIN;
 // miner's coin stake reward based on nBits and coin age spent (coin-days)
 int64 GetProofOfStakeReward(int64 nCoinAge, unsigned int nBits, unsigned int nTime)
 {
+	if (nTime < nForkTime) {
     int64 nRewardCoinYear;
-
 
     // Stage 2 of emission process is PoS-based. It will be active on mainNet since 20 Jun 2013.
 
@@ -995,7 +998,16 @@ int64 GetProofOfStakeReward(int64 nCoinAge, unsigned int nBits, unsigned int nTi
     if (fDebug && GetBoolArg("-printcreation"))
         printf("GetProofOfStakeReward(): create=%s nCoinAge=%"PRI64d" nBits=%d\n", FormatMoney(nSubsidy).c_str(), nCoinAge, nBits);
 
-    return nSubsidy;
+    return nSubsidy; 
+ }
+	// New Emission
+		int64 nRewardCoinYear;
+
+		nRewardCoinYear = 9 * CENT;
+
+		int64 nSubsidy = nCoinAge * nRewardCoinYear / 365 / COIN;
+
+		return nSubsidy;
 }
 
 static const int64 nTargetTimespan = 0.16 * 24 * 60 * 60;  // 4-hour
@@ -1915,6 +1927,14 @@ bool CTransaction::GetCoinAge(CTxDB& txdb, uint64& nCoinAge) const
 
         // Read block header
         CBlock block;
+		
+		unsigned int nStakeMinAge;
+		
+		if (nTime > nForkTime)
+			nStakeMinAge = nStakeMinAgeNew;
+		else
+			nStakeMinAge = nStakeMinAgeOld;
+		
         if (!block.ReadFromDisk(txindex.pos.nFile, txindex.pos.nBlockPos, false))
             return false; // unable to read block of previous transaction
         if (block.GetBlockTime() + nStakeMinAge > nTime)
@@ -2240,7 +2260,7 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     if (pblock->IsProofOfStake())
     {
         uint256 hashProofOfStake = 0;
-        if (!CheckProofOfStake(pblock->vtx[1], pblock->nBits, hashProofOfStake))
+        if (!CheckProofOfStake(pblock->vtx[1], pblock->nBits, hashProofOfStake, pblock->nTime))
         {
             printf("WARNING: ProcessBlock(): check proof-of-stake failed for block %s\n", hash.ToString().c_str());
             return false; // do not error here as we expect this during initial block download
@@ -2521,7 +2541,7 @@ bool LoadBlockIndex(bool fAllowNew)
 
         bnProofOfStakeLimit = bnProofOfStakeLimitTestNet; // 0x00000fff PoS base target is fixed in testnet
         bnProofOfWorkLimit = bnProofOfWorkLimitTestNet; // 0x0000ffff PoW base target is fixed in testnet
-        nStakeMinAge = 2 * 60 * 60; // test net min age is 2 hours
+        nStakeMinAgeOld = 2 * 60 * 60; // test net min age is 2 hours
         nModifierInterval = 20 * 60; // test modifier interval is 20 minutes
         nCoinbaseMaturity = 10; // test maturity is 30 blocks
         nStakeTargetSpacing = 3 * 60; // test block spacing is 3 minutes
@@ -3259,6 +3279,13 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         {
             if (pindex->GetBlockHash() == hashStop)
             {
+				unsigned int nStakeMinAge;
+				
+				if (pindex->nTime > nForkTime)
+					nStakeMinAge = nStakeMinAgeNew;
+				else
+					nStakeMinAge = nStakeMinAgeOld;
+					
                 printf("  getblocks stopping at %d %s\n", pindex->nHeight, pindex->GetBlockHash().ToString().substr(0,20).c_str());
                 // ppcoin: tell downloading node about the latest block if it's
                 // without risk being rejected due to stake connection check
@@ -4035,7 +4062,7 @@ CBlock* CreateNewBlock(CWallet* pwallet, bool fProofOfStake)
         int64 nSearchTime = txCoinStake.nTime; // search to current time
         if (nSearchTime > nLastCoinStakeSearchTime)
         {
-            if (pwallet->CreateCoinStake(*pwallet, pblock->nBits, nSearchTime-nLastCoinStakeSearchTime, txCoinStake))
+            if (pwallet->CreateCoinStake(*pwallet, pblock->nBits, nSearchTime-nLastCoinStakeSearchTime, txCoinStake, pblock->nTime))
             {
                 if (txCoinStake.nTime >= max(pindexPrev->GetMedianTimePast()+1, pindexPrev->GetBlockTime() - nMaxClockDrift))
                 {   // make sure coinstake would meet timestamp protocol

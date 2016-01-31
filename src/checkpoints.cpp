@@ -404,8 +404,13 @@ static MapCheckpoints mapCheckpointsTestnet =
         // sync-checkpoint should always be accepted block
         assert(mapBlockIndex.count(hashSyncCheckpoint));
         const CBlockIndex* pindexSync = mapBlockIndex[hashSyncCheckpoint];
+		if (pindexSync->nTime > nForkTime) 
+		{ //Changed
         return (nBestHeight >= pindexSync->nHeight + nCoinbaseMaturity ||
-                pindexSync->GetBlockTime() + nStakeMinAge < GetAdjustedTime());
+                pindexSync->GetBlockTime() + nStakeMinAgeNew < GetAdjustedTime());
+		}else{
+		return (nBestHeight >= pindexSync->nHeight + nCoinbaseMaturity ||
+                pindexSync->GetBlockTime() + nStakeMinAgeOld < GetAdjustedTime());}
     }
 
     // Is the sync-checkpoint too old?
