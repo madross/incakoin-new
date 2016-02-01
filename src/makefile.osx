@@ -38,7 +38,7 @@ LIBS += \
  $(DEPSDIR)/lib/libboost_thread-mt.a \
  $(DEPSDIR)/lib/libssl.a \
  $(DEPSDIR)/lib/libcrypto.a \
- -lz
+ $(DEPSDIR)/lib/libz.a
 else
 TESTLIBS += \
  -lboost_unit_test_framework-mt
@@ -60,7 +60,7 @@ ifdef RELEASE
 # Compile for maximum compatibility and smallest size.
 # This requires that dependencies are compiled
 # the same way.
-CFLAGS = -mmacosx-version-min=10.5 -arch x86_64 -O3 -msse2
+CFLAGS = -mmacosx-version-min=10.7 -arch x86_64 -O3 -msse2
 else
 CFLAGS = -g -msse2
 endif
