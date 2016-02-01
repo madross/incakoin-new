@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = IncaKoin-qt
 macx:TARGET = "IncaKoin-Qt"
-VERSION = 1.2.0
+VERSION = 1.3.0
 INCLUDEPATH += src src/json src/qt
 QT += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
