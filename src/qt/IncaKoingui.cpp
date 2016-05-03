@@ -66,6 +66,7 @@ extern CWallet* pwalletMain;
 extern int64 nLastCoinStakeSearchInterval;
 extern int nStakeTargetSpacing;
 double GetPoSKernelPS(const CBlockIndex* blockindex = NULL);
+extern bool fWalletUnlockMintOnly;
 
 IncaKoinGUI::IncaKoinGUI(QWidget *parent):
     QMainWindow(parent),
@@ -897,13 +898,16 @@ void IncaKoinGUI::unlockWallet()
 {
     if(!walletModel)
         return;
+
     // Unlock wallet when requested by wallet model
     if(walletModel->getEncryptionStatus() == WalletModel::Locked)
     {
-        AskPassphraseDialog dlg(AskPassphraseDialog::Unlock, this);
+        AskPassphraseDialog::Mode mode = sender() == unlockWalletAction ?
+              AskPassphraseDialog::UnlockStaking : AskPassphraseDialog::Unlock;
+        AskPassphraseDialog dlg(mode, this);
         dlg.setModel(walletModel);
         dlg.exec();
-   }
+    }
 }
 
 
