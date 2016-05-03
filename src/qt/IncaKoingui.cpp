@@ -73,8 +73,9 @@ IncaKoinGUI::IncaKoinGUI(QWidget *parent):
     clientModel(0),
     walletModel(0),
     encryptWalletAction(0),
-	unlockWalletAction(0),
     changePassphraseAction(0),
+    unlockWalletAction(0),
+    lockWalletAction(0),
     aboutQtAction(0),
     trayIcon(0),
     notificator(0),
@@ -274,19 +275,17 @@ void IncaKoinGUI::createActions()
     optionsAction->setToolTip(tr("Modify configuration options for IncaKoin"));
     optionsAction->setMenuRole(QAction::PreferencesRole);
     toggleHideAction = new QAction(QIcon(":/icons/IncaKoin"), tr("&Show / Hide"), this);
-	
-    encryptWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Encrypt Wallet"), this);
+    encryptWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Encrypt Wallet..."), this);
     encryptWalletAction->setToolTip(tr("Encrypt or decrypt wallet"));
     encryptWalletAction->setCheckable(true);
-	//adding in unlock wallet feature to gui
-	unlockWalletAction = new QAction(QIcon(":/icons/lock_open"), tr("&Unlock Wallet"), this);
-    unlockWalletAction->setToolTip(tr("Unlock an Encrypted Wallet")); //hbn code is setStatusTip - doesn't match up here.  qt5 maybe?
-    unlockWalletAction->setCheckable(true);
-	// e
     backupWalletAction = new QAction(QIcon(":/icons/filesave"), tr("&Backup Wallet..."), this);
     backupWalletAction->setToolTip(tr("Backup wallet to another location"));
     changePassphraseAction = new QAction(QIcon(":/icons/key"), tr("&Change Passphrase..."), this);
     changePassphraseAction->setToolTip(tr("Change the passphrase used for wallet encryption"));
+    unlockWalletAction = new QAction(QIcon(":/icons/lock_open"), tr("&Unlock Wallet..."), this);
+    unlockWalletAction->setToolTip(tr("Unlock wallet"));
+    lockWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Lock Wallet"), this);
+    lockWalletAction->setToolTip(tr("Lock wallet"));
     signMessageAction = new QAction(QIcon(":/icons/edit"), tr("Sign &message..."), this);
     verifyMessageAction = new QAction(QIcon(":/icons/transaction_0"), tr("&Verify message..."), this);
 
@@ -305,9 +304,10 @@ void IncaKoinGUI::createActions()
     connect(encryptWalletAction, SIGNAL(triggered(bool)), this, SLOT(encryptWallet(bool)));
     connect(backupWalletAction, SIGNAL(triggered()), this, SLOT(backupWallet()));
     connect(changePassphraseAction, SIGNAL(triggered()), this, SLOT(changePassphrase()));
+    connect(unlockWalletAction, SIGNAL(triggered()), this, SLOT(unlockWallet()));
+    connect(lockWalletAction, SIGNAL(triggered()), this, SLOT(lockWallet()));
     connect(signMessageAction, SIGNAL(triggered()), this, SLOT(gotoSignMessageTab()));
     connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(gotoVerifyMessageTab()));
-	connect(unlockWalletAction, SIGNAL(triggered()), this, SLOT(unlockWallet()));
 	connect(blockAction, SIGNAL(triggered()), this, SLOT(gotoBlockBrowser()));
 }
 
@@ -332,11 +332,12 @@ void IncaKoinGUI::createMenuBar()
 
     QMenu *settings = appMenuBar->addMenu(tr("&Settings"));
     settings->addAction(optionsAction);
-	
-	QMenu *wallet = appMenuBar->addMenu(tr("&Wallet")); 
+
+    QMenu *wallet = appMenuBar->addMenu(tr("&Wallet"));
     wallet->addAction(encryptWalletAction);
-	wallet->addAction(unlockWalletAction);
     wallet->addAction(changePassphraseAction);
+    wallet->addAction(unlockWalletAction);
+    wallet->addAction(lockWalletAction);
 
     QMenu *help = appMenuBar->addMenu(tr("&Help"));
     help->addAction(openRPCConsoleAction);
@@ -347,18 +348,24 @@ void IncaKoinGUI::createMenuBar()
 
 void IncaKoinGUI::createToolBars()
 {
-    QToolBar *toolbar = addToolBar(tr("Tabs toolbar"));
-    toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    toolbar->addAction(overviewAction);
-    toolbar->addAction(sendCoinsAction);
-    toolbar->addAction(receiveCoinsAction);
-    toolbar->addAction(historyAction);
-    toolbar->addAction(addressBookAction);
+    mainToolbar = addToolBar(tr("Tabs toolbar"));
+    mainToolbar->setObjectName("main");
+    mainToolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    mainToolbar->addAction(overviewAction);
+    mainToolbar->addAction(sendCoinsAction);
+    mainToolbar->addAction(receiveCoinsAction);
+    mainToolbar->addAction(historyAction);
+    mainToolbar->addAction(addressBookAction);
+    mainToolbar->setContextMenuPolicy(Qt::NoContextMenu);
 
-    QToolBar *toolbar2 = addToolBar(tr("Actions toolbar"));
-    toolbar2->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    toolbar2->addAction(blockAction);
-    toolbar2->addAction(exportAction);
+    secondaryToolbar = addToolBar(tr("Actions toolbar"));
+    secondaryToolbar->setObjectName("actions");
+    secondaryToolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    secondaryToolbar->addAction(blockAction);
+    secondaryToolbar->addAction(unlockWalletAction);
+    secondaryToolbar->addAction(lockWalletAction);
+    secondaryToolbar->addAction(exportAction);
+    secondaryToolbar->setContextMenuPolicy(Qt::NoContextMenu);
 }
 
 void IncaKoinGUI::setClientModel(ClientModel *clientModel)
@@ -832,29 +839,36 @@ void IncaKoinGUI::setEncryptionStatus(int status)
     case WalletModel::Unencrypted:
         labelEncryptionIcon->hide();
         encryptWalletAction->setChecked(false);
-		unlockWalletAction->setChecked(false);
         changePassphraseAction->setEnabled(false);
+        unlockWalletAction->setVisible(false);
+        lockWalletAction->setVisible(false);
         encryptWalletAction->setEnabled(true);
         break;
     case WalletModel::Unlocked:
+        disconnect(labelEncryptionIcon, SIGNAL(clicked()), unlockWalletAction, SLOT(trigger()));
+        disconnect(labelEncryptionIcon, SIGNAL(clicked()),   lockWalletAction, SLOT(trigger()));
+        connect   (labelEncryptionIcon, SIGNAL(clicked()),   lockWalletAction, SLOT(trigger()));
         labelEncryptionIcon->show();
         labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
         encryptWalletAction->setChecked(true);
-		unlockWalletAction->setChecked(true); 
         changePassphraseAction->setEnabled(true);
+        unlockWalletAction->setVisible(false);
+        lockWalletAction->setVisible(true);
         encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
-		unlockWalletAction->setEnabled(false); 
         break;
     case WalletModel::Locked:
+        disconnect(labelEncryptionIcon, SIGNAL(clicked()), unlockWalletAction, SLOT(trigger()));
+        disconnect(labelEncryptionIcon, SIGNAL(clicked()),   lockWalletAction, SLOT(trigger()));
+        connect   (labelEncryptionIcon, SIGNAL(clicked()), unlockWalletAction, SLOT(trigger()));
         labelEncryptionIcon->show();
         labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_closed").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>locked</b>"));
         encryptWalletAction->setChecked(true);
-		unlockWalletAction->setChecked(true);
         changePassphraseAction->setEnabled(true);
+        unlockWalletAction->setVisible(true);
+        lockWalletAction->setVisible(false);
         encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
-		unlockWalletAction->setEnabled(true); 
         break;
     }
 }
@@ -910,7 +924,13 @@ void IncaKoinGUI::unlockWallet()
     }
 }
 
+void IncaKoinGUI::lockWallet()
+{
+    if(!walletModel)
+        return;
 
+    walletModel->setWalletLocked(true);
+}
 
 void IncaKoinGUI::showNormalIfMinimized(bool fToggleHidden)
 {
