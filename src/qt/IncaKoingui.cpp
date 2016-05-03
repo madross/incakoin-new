@@ -68,6 +68,15 @@ extern int nStakeTargetSpacing;
 double GetPoSKernelPS(const CBlockIndex* blockindex = NULL);
 extern bool fWalletUnlockMintOnly;
 
+ActiveLabel::ActiveLabel(const QString & text, QWidget * parent):
+    QLabel(parent){}
+
+void ActiveLabel::mouseReleaseEvent(QMouseEvent * event)
+{
+    emit clicked();
+}
+
+
 IncaKoinGUI::IncaKoinGUI(QWidget *parent):
     QMainWindow(parent),
     clientModel(0),
@@ -80,7 +89,8 @@ IncaKoinGUI::IncaKoinGUI(QWidget *parent):
     trayIcon(0),
     notificator(0),
     rpcConsole(0),
-	blockBrowser(0)
+	blockBrowser(0),
+    nWeight(0)
 {
     resize(850, 550);
     setWindowTitle(tr("IncaKoin") + " - " + tr("Wallet"));
@@ -143,8 +153,9 @@ IncaKoinGUI::IncaKoinGUI(QWidget *parent):
     QHBoxLayout *frameBlocksLayout = new QHBoxLayout(frameBlocks);
     frameBlocksLayout->setContentsMargins(3,0,3,0);
     frameBlocksLayout->setSpacing(3);
-    labelEncryptionIcon = new QLabel();
-	labelStakingIcon = new QLabel();
+    labelEncryptionIcon = new ActiveLabel();
+
+    labelStakingIcon = new QLabel();
     labelConnectionsIcon = new QLabel();
     labelBlocksIcon = new QLabel();
     frameBlocksLayout->addStretch();
@@ -161,6 +172,8 @@ IncaKoinGUI::IncaKoinGUI(QWidget *parent):
     connect(timerStakingIcon, SIGNAL(timeout()), this, SLOT(updateStakingIcon()));
     timerStakingIcon->start(30 * 1000);
     updateStakingIcon();
+
+    connect(labelEncryptionIcon, SIGNAL(clicked()), unlockWalletAction, SLOT(trigger()));
 
     // Progress bar and label for blocks download
     progressBarLabel = new QLabel();
@@ -453,6 +466,7 @@ void IncaKoinGUI::createTrayIcon()
 #else
     // Note: On Mac, the dock icon is used to provide the tray's functionality.
     MacDockIconHandler *dockIconHandler = MacDockIconHandler::instance();
+    dockIconHandler->setMainWindow((QMainWindow *)this);
     trayIconMenu = dockIconHandler->dockMenu();
 #endif
 
@@ -565,7 +579,7 @@ void IncaKoinGUI::setNumBlocks(int count, int nTotalBlocks)
         progressBar->setVisible(false);
     }
 
-	tooltip = tr("Current difficulty is %1.").arg(clientModel->GetDifficulty()) + QString("<br>") + tooltip;
+    tooltip = tr("Current difficulty is %1.").arg(clientModel->GetDifficulty()) + QString("<br>") + tooltip;
 
     QDateTime lastBlockDate = clientModel->getLastBlockDate();
     int secs = lastBlockDate.secsTo(QDateTime::currentDateTime());
@@ -959,11 +973,26 @@ void IncaKoinGUI::toggleHidden()
     showNormalIfMinimized(true);
 }
 
+void IncaKoinGUI::updateWeight()
+{
+    if (!pwalletMain)
+        return;
+
+    TRY_LOCK(cs_main, lockMain);
+    if (!lockMain)
+        return;
+
+    TRY_LOCK(pwalletMain->cs_wallet, lockWallet);
+    if (!lockWallet)
+        return;
+
+    uint64 nMinWeight = 0, nMaxWeight = 0;
+    pwalletMain->GetStakeWeight(*pwalletMain, nMinWeight, nMaxWeight, nWeight);
+}
+
 void IncaKoinGUI::updateStakingIcon()
 {
-    uint64 nMinWeight = 0, nMaxWeight = 0, nWeight = 0;
-    if (pwalletMain)
-        pwalletMain->GetStakeWeight(*pwalletMain, nMinWeight, nMaxWeight, nWeight);
+    updateWeight();
 
     if (nLastCoinStakeSearchInterval && nWeight)
     {
