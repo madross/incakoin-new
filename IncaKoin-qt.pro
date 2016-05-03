@@ -121,8 +121,8 @@ HEADERS += src/qt/IncaKoingui.h \
     src/qt/addresstablemodel.h \
     src/qt/optionsdialog.h \
     src/qt/sendcoinsdialog.h \
-	src/qt/coincontroldialog.h \
-	src/qt/coincontroltreewidget.h \
+    src/qt/coincontroldialog.h \
+    src/qt/coincontroltreewidget.h \
     src/qt/addressbookpage.h \
     src/qt/signverifymessagedialog.h \
     src/qt/aboutdialog.h \
@@ -133,7 +133,7 @@ HEADERS += src/qt/IncaKoingui.h \
     src/base58.h \
     src/bignum.h \
     src/checkpoints.h \
-	src/coincontrol.h \
+    src/coincontrol.h \
     src/compat.h \
     src/sync.h \
     src/util.h \
@@ -190,16 +190,16 @@ HEADERS += src/qt/IncaKoingui.h \
     src/version.h \
     src/netbase.h \
     src/clientversion.h \
-	src/qt/blockbrowser.h
-    src/qt/macnotificationhandler.h \
+    src/qt/blockbrowser.h \
+    src/qt/macnotificationhandler.h
 
 SOURCES += src/qt/IncaKoin.cpp src/qt/IncaKoingui.cpp \
     src/qt/transactiontablemodel.cpp \
     src/qt/addresstablemodel.cpp \
     src/qt/optionsdialog.cpp \
     src/qt/sendcoinsdialog.cpp \
-	src/qt/coincontroldialog.cpp \
-	src/qt/coincontroltreewidget.cpp \
+    src/qt/coincontroldialog.cpp \
+    src/qt/coincontroltreewidget.cpp \
     src/qt/addressbookpage.cpp \
     src/qt/signverifymessagedialog.cpp \
     src/qt/aboutdialog.cpp \
@@ -254,15 +254,15 @@ SOURCES += src/qt/IncaKoin.cpp src/qt/IncaKoingui.cpp \
     src/qt/rpcconsole.cpp \
     src/noui.cpp \
     src/kernel.cpp \
-	src/qt/blockbrowser.cpp
+    src/qt/blockbrowser.cpp
 
 RESOURCES += \
     src/qt/IncaKoin.qrc
 
 FORMS += \
     src/qt/forms/sendcoinsdialog.ui \
-	src/qt/forms/coincontroldialog.ui \
-	src/qt/forms/coincontroldialog.ui \
+    src/qt/forms/coincontroldialog.ui \
+    src/qt/forms/coincontroldialog.ui \
     src/qt/forms/addressbookpage.ui \
     src/qt/forms/signverifymessagedialog.ui \
     src/qt/forms/aboutdialog.ui \
@@ -273,7 +273,7 @@ FORMS += \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
     src/qt/forms/optionsdialog.ui \
-	src/qt/forms/blockbrowser.ui
+    src/qt/forms/blockbrowser.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h
