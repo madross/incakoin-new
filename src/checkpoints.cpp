@@ -82,8 +82,13 @@ static MapCheckpoints mapCheckpoints =
             ( 800000, uint256("0x1ef82de5c91dd6a021f53292b989bb2f0bb04d0ae49667e47cec94553a8b1569"))
             ( 900000, uint256("0x07c0a3bc95c8a06711d4877573e855d9abcb7e516f999ee7d983e71436681de1"))
                        //checkpoints added 27/6/2016 madross
-            ( 900000, uint256("0x07c0a3bc95c8a06711d4877573e855d9abcb7e516f999ee7d983e71436681de1"))
-            ( 900000, uint256("0x07c0a3bc95c8a06711d4877573e855d9abcb7e516f999ee7d983e71436681de1"))
+            ( 1000000, uint256("0x000000000010e31e98f9fe6fb77ed5b3b9c82a5ac6f9f7cd6676929fe85f7021"))
+            ( 1200000, uint256("0x000000000019f5831f3aefb970c0902161979e81d10633334ee7720949dec8e6"))
+            ( 1300000, uint256("0x00000000023288465717a01e87591feaf32e344fcf56d6b20be86180c736ffe6"))
+            ( 1400000, uint256("0x0000000000124369c30891f388b516a3a662c689baef66190bc3ef423bbedb0b"))
+            ( , uint256("0x0"))
+            ( , uint256("0x0"))
+            ( , uint256("0x0"))
         ;
 
 
