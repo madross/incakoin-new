@@ -43,6 +43,7 @@ static CBigNum bnProofOfWorkLimitTestNet(~uint256(0) >> 16);
 static CBigNum bnProofOfStakeLimitTestNet(~uint256(0) >> 20);
 
 unsigned int nForkTime = 1462406400; // 5-5-2016 00:00:00 GMT
+unsigned int nStakeFixForkTime = 1468022400; // 9 July 2016 00:00:00 GMT
 
 unsigned int nStakeMinAgeOld = 60 * 60 * 24 * 90; // Old minimum age for coin age
 unsigned int nStakeMinAgeNew = 60 * 60 * 24 * 35; // New minimum age for coin age
@@ -1001,11 +1002,16 @@ int64 GetProofOfStakeReward(int64 nCoinAge, unsigned int nBits, unsigned int nTi
     return nSubsidy; 
  }
 	// New Emission
-		int64 nRewardCoinYear;
-
-		nRewardCoinYear = 9 * CENT;
-
-		int64 nSubsidy = nCoinAge * nRewardCoinYear / 365 / COIN;
+		int64 nRewardCoinYear = 9 * CENT;
+		int64 nSubsidy;
+		
+	// Fix for abnormally low staking values. Change to 9% every 5 weeks.
+		if (nTime < nStakeFixForkTime)
+				nSubsidy = nCoinAge * nRewardCoinYear / 365 / COIN;
+		else {
+				nRewardCoinYear = 94 * CENT;
+				nSubsidy = nCoinAge * nRewardCoinYear / 365;
+			 }
 
 		return nSubsidy;
 }
@@ -2947,7 +2953,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         CAddress addrFrom;
         uint64 nNonce = 1;
         vRecv >> pfrom->nVersion >> pfrom->nServices >> nTime >> addrMe;
-        if (pfrom->nVersion < (GetAdjustedTime() > nForkTime ? MIN_PEER_PROTO_VERSION_FORK : MIN_PEER_PROTO_VERSION))
+        if (pfrom->nVersion < MIN_PEER_PROTO_VERSION)
         {
             // Disconnect from peers older than this proto version
             printf("partner %s using obsolete version %i; disconnecting\n", pfrom->addr.ToString().c_str(), pfrom->nVersion);
