@@ -31,17 +31,21 @@ int64 GetWeight(int64 nIntervalBeginning, int64 nIntervalEnd)
     //
     // Maximum TimeWeight is 30 days.
 
-  //Tranz We are going to want to change this to fix the max weight. Requires a hard fork
-  //New Code:
-  //return min(nIntervalEnd - nIntervalBeginning - nStakeMinAge, (int64)nStakeMaxAge);
-  
-  if (nIntervalBeginning < nForkTime)
-	return min(nIntervalEnd - nIntervalBeginning, (int64)nStakeMaxAge) - nStakeMinAgeOld;
-  
-  return min(nIntervalEnd - nIntervalBeginning, (int64)nStakeMaxAge) - nStakeMinAgeNew; // Changed
+    //Tranz We are going to want to change this to fix the max weight. Requires a hard fork
+    //New Code:
+    //return min(nIntervalEnd - nIntervalBeginning - nStakeMinAge, (int64)nStakeMaxAge);
 
-}	
-	
+    if (nIntervalBeginning < nForkTime) {
+        if (fDebug)
+            printf("GetWeight(): Weight=%lld\n", min(nIntervalEnd - nIntervalBeginning, (int64)nStakeMaxAge) - nStakeMinAgeOld);
+        return min(nIntervalEnd - nIntervalBeginning, (int64)nStakeMaxAge) - nStakeMinAgeOld;
+    } else {
+        if (fDebug)
+            printf("GetWeight(): Weight=%lld\n", min(nIntervalEnd - nIntervalBeginning, (int64)nStakeMaxAge) - nStakeMinAgeNew);
+        return min(nIntervalEnd - nIntervalBeginning, (int64)nStakeMaxAge) - nStakeMinAgeNew; // Changed
+    }
+}
+
 // Get the last stake modifier and its generation time from a given block
 static bool GetLastStakeModifier(const CBlockIndex* pindex, uint64& nStakeModifier, int64& nModifierTime)
 {
@@ -234,13 +238,13 @@ static bool GetKernelStakeModifier(uint256 hashBlockFrom, uint64& nStakeModifier
     nStakeModifierTime = pindexFrom->GetBlockTime();
     int64 nStakeModifierSelectionInterval = GetStakeModifierSelectionInterval();
     const CBlockIndex* pindex = pindexFrom;
-	unsigned int nStakeMinAge;
-	
-	if (pindexFrom->nTime > nForkTime)
-		nStakeMinAge = nStakeMinAgeNew;
-	else
-		nStakeMinAge = nStakeMinAgeOld;
-	
+    unsigned int nStakeMinAge;
+
+    if (pindexFrom->nTime > nForkTime)
+        nStakeMinAge = nStakeMinAgeNew;
+    else
+        nStakeMinAge = nStakeMinAgeOld;
+
     // loop to find the stake modifier later by a selection interval
     while (nStakeModifierTime < pindexFrom->GetBlockTime() + nStakeModifierSelectionInterval)
     {
@@ -288,19 +292,32 @@ static bool GetKernelStakeModifier(uint256 hashBlockFrom, uint64& nStakeModifier
 //
 bool CheckStakeKernelHash(unsigned int nBits, const CBlock& blockFrom, unsigned int nTxPrevOffset, const CTransaction& txPrev, const COutPoint& prevout, unsigned int nTimeTx, uint256& hashProofOfStake, bool fPrintProofOfStake, unsigned int nBlockTime)
 {
-	unsigned int nStakeMinAge;
-	
-	if (nBlockTime > nForkTime)
-		nStakeMinAge = nStakeMinAgeNew;
-	else
-		nStakeMinAge = nStakeMinAgeOld;
-	
+    unsigned int nStakeMinAge;
+
+    if (nBlockTime == 0)
+        nBlockTime = GetAdjustedTime();
+
+    if (nBlockTime > nForkTime)
+        nStakeMinAge = nStakeMinAgeNew;
+    else
+        nStakeMinAge = nStakeMinAgeOld;
+
     if (nTimeTx < txPrev.nTime)  // Transaction timestamp violation
         return error("CheckStakeKernelHash() : nTime violation");
 
     unsigned int nTimeBlockFrom = blockFrom.GetBlockTime(); // Changed
-    if (nTimeBlockFrom + nStakeMinAge > nTimeTx) // Min age requirement
+
+    // Min age requirement
+    if (nTimeBlockFrom + nStakeMinAge > nTimeTx) {
+        if (fDebug)
+            printf("nBlockTime=%s, nTimeBlockFrom=%s, nStakeMinAge=%u, nTimeCombined=%s, nTimeTx=%s\n",
+                DateTimeStrFormat(nBlockTime).c_str(),
+                DateTimeStrFormat(nTimeBlockFrom).c_str(),
+                nStakeMinAge,
+                DateTimeStrFormat(nTimeBlockFrom + nStakeMinAge).c_str(),
+                DateTimeStrFormat(nTimeTx).c_str());
         return error("CheckStakeKernelHash() : min age violation");
+    }
 
     CBigNum bnTargetPerCoinDay;
     bnTargetPerCoinDay.SetCompact(nBits);
