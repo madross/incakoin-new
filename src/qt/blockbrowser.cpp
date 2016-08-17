@@ -141,7 +141,7 @@ std::string getOutputs(std::string txid)
 		str.append(CIncaKoinAddress(address).ToString());
         str.append(": ");
         str.append(amount);
-        str.append(" INCA");
+        str.append(" NKA");
         str.append("\n");
     }
 
@@ -179,7 +179,7 @@ std::string getInputs(std::string txid)
         str.append(CIncaKoinAddress(address).ToString());
         str.append(": ");
         str.append(amount);
-        str.append("INCA");
+        str.append("NKA");
         str.append("\n");
     }
 
@@ -264,11 +264,11 @@ void BlockBrowser::updateExplorer(bool block)
     
     else {
         std::string txid = ui->txBox->text().toUtf8().constData();
-        ui->valueBox->setText(QString::number(getTxTotalValue(txid), 'f', 6) + " INCA"); 
+        ui->valueBox->setText(QString::number(getTxTotalValue(txid), 'f', 6) + " NKA"); 
         ui->txID->setText(QString::fromUtf8(txid.c_str())); 
         ui->outputBox->setText(QString::fromUtf8(getOutputs(txid).c_str())); 
         ui->inputBox->setText(QString::fromUtf8(getInputs(txid).c_str())); 
-        ui->feesBox->setText(QString::number(getTxFees(txid), 'f', 6) + " INCA"); 
+        ui->feesBox->setText(QString::number(getTxFees(txid), 'f', 6) + " NKA"); 
     }
 }
 

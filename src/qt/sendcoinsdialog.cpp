@@ -32,7 +32,7 @@ SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
 #endif
 #if QT_VERSION >= 0x040700
     /* Do not move this to the XML file, Qt before 4.7 will choke on it */
-     ui->lineEditCoinControlChange->setPlaceholderText(tr("Enter a INCA address (e.g. NMPP3KWNxXiS3BjiYoNqvm33BkR1up9szu)"));
+     ui->lineEditCoinControlChange->setPlaceholderText(tr("Enter a NKA address (e.g. NMPP3KWNxXiS3BjiYoNqvm33BkR1up9szu)"));
 #endif
 
     addEntry();
@@ -464,7 +464,7 @@ void SendCoinsDialog::coinControlChangeEdited(const QString & text)
         else if (!CIncaKoinAddress(text.toStdString()).IsValid())
         {
             ui->labelCoinControlChangeLabel->setStyleSheet("QLabel{color:red;}");
-            ui->labelCoinControlChangeLabel->setText(tr("WARNING: Invalid INCA address"));
+            ui->labelCoinControlChangeLabel->setText(tr("WARNING: Invalid NKA address"));
         }
         else
         {
