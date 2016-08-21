@@ -168,13 +168,24 @@ IncaKoinGUI::IncaKoinGUI(QWidget *parent):
     frameBlocksLayout->addWidget(labelBlocksIcon);
     frameBlocksLayout->addStretch();
 
+    // Set staking pixmap
+    labelStakingIcon->setPixmap(QIcon(":/icons/staking_off").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
 
+    // If staking is enabled set some timers to update statistics
     if (GetBoolArg("-staking", true)) {
+        // Add a timer to update the staking icon
         QTimer *timerStakingIcon = new QTimer(labelStakingIcon);
-
-        connect(timerStakingIcon, SIGNAL(timeout()), this, SLOT(updateStakingIcon()));
         timerStakingIcon->start(30 * 1000);
-        updateStakingIcon();
+        connect(timerStakingIcon, SIGNAL(timeout()), this, SLOT(updateStakingIcon()));
+
+        // Add a timer to update staking weights
+        QTimer *timerStakingWeights = new QTimer(labelStakingIcon);
+        timerStakingWeights->start(30 * 1000);
+        connect(timerStakingWeights, SIGNAL(timeout()), this, SLOT(updateStakingWeights()));
+
+        // Set initial values for user and network weights
+        nWeight=0;
+        nNetworkWeight=0;
     }
 
     connect(labelEncryptionIcon, SIGNAL(clicked()), unlockWalletAction, SLOT(trigger()));
@@ -984,12 +995,29 @@ void IncaKoinGUI::updateWeight()
 
 void IncaKoinGUI::updateStakingIcon()
 {
-    updateWeight();
-
-    if (nLastCoinStakeSearchInterval && nWeight)
+    if (pwalletMain && pwalletMain->IsLocked())
     {
-        uint64_t nNetworkWeight = GetPoSKernelPS();
-        unsigned nEstimateTime = nStakeTargetSpacing * nNetworkWeight / nWeight;
+        labelStakingIcon->setToolTip(tr("Not staking because wallet is locked."));
+        labelStakingIcon->setEnabled(false);
+    }
+    else if (vNodes.empty())
+    {
+        labelStakingIcon->setToolTip(tr("Not staking because wallet is offline."));
+        labelStakingIcon->setEnabled(false);
+    }
+    else if (IsInitialBlockDownload())
+    {
+        labelStakingIcon->setToolTip(tr("Not staking because wallet is syncing."));
+        labelStakingIcon->setEnabled(false);
+    }
+    else if (!nWeight)
+    {
+        labelStakingIcon->setToolTip(tr("Not staking because you don't have mature coins."));
+        labelStakingIcon->setEnabled(false);
+    }
+    else if (nLastCoinStakeSearchInterval)
+    {
+        uint64 nEstimateTime = nStakeTargetSpacing * nNetworkWeight / nWeight;
 
         QString text;
         if (nEstimateTime < 60)
@@ -1015,17 +1043,21 @@ void IncaKoinGUI::updateStakingIcon()
     else
     {
         labelStakingIcon->setPixmap(QIcon(":/icons/staking_off").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
-        if (pwalletMain && pwalletMain->IsLocked())
-            labelStakingIcon->setToolTip(tr("Not staking because wallet is locked"));
-        else if (vNodes.empty())
-            labelStakingIcon->setToolTip(tr("Not staking because wallet is offline"));
-        else if (clientModel->getNumConnections() < 3 )
-            labelStakingIcon->setToolTip(tr("Not staking because wallet is still acquiring nodes"));
-        else if (IsInitialBlockDownload() || clientModel->getNumBlocks() < clientModel->getNumBlocksOfPeers())
-            labelStakingIcon->setToolTip(tr("Not staking because wallet is syncing"));
-        else if (!nWeight)
-            labelStakingIcon->setToolTip(tr("Not staking because you don't have mature coins"));
-        else
-            labelStakingIcon->setToolTip(tr("Not staking"));
+        labelStakingIcon->setToolTip(tr("Not staking"));
+    }
+}
+
+void IncaKoinGUI::updateStakingWeights()
+{
+    // Only update if we have the network's current number of blocks, or weight(s) are zero (fixes lagging GUI)
+    if ((clientModel && (clientModel->getNumBlocks()-clientModel->getNumBlocksOfPeers()>-3)) || !nWeight || !nNetworkWeight)
+    {
+        nWeight = 0;
+        uint64 nMinWeight = 0, nMaxWeight = 0;
+
+        if (pwalletMain)
+            pwalletMain->GetStakeWeight(*pwalletMain, nMinWeight, nMaxWeight, nWeight);
+
+        nNetworkWeight = GetPoSKernelPS();
     }
 }

@@ -124,6 +124,7 @@ private:
     QMovie *syncIconMovie;
 
     uint64 nWeight;
+    uint64 nNetworkWeight;
 
     /** Create the main UI actions. */
     void createActions();
@@ -207,6 +208,7 @@ private slots:
 
     void updateWeight();
     void updateStakingIcon();
+    void updateStakingWeights();
 };
 
 #endif
