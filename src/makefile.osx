@@ -6,12 +6,12 @@
 # Mac OS X makefile for IncaKoin
 # Originally by Laszlo Hanyecz (solar@heliacal.net)
 
-CXX=llvm-g++
+CXX=clang++
 DEPSDIR=/opt/local
 
 INCLUDEPATHS= \
  -I"$(CURDIR)" \
- -I"$(CURDIR)"/obj \
+ -I"$(CURDIR)/obj" \
  -I"$(DEPSDIR)/include" \
  -I"$(DEPSDIR)/include/db48"
 
@@ -60,9 +60,9 @@ ifdef RELEASE
 # Compile for maximum compatibility and smallest size.
 # This requires that dependencies are compiled
 # the same way.
-CFLAGS = -mmacosx-version-min=10.7 -arch x86_64 -O3 -msse2
+CFLAGS = -mmacosx-version-min=10.7 -arch x86_64 -O2
 else
-CFLAGS = -g -msse2
+CFLAGS = -g
 endif
 
 # ppc doesn't work because we don't support big-endian

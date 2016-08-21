@@ -34,9 +34,9 @@ QString IncaKoinUnits::name(int unit)
 {
     switch(unit)
     {
-    case BTC: return QString("INCA");
-    case mBTC: return QString("mINCA");
-    case uBTC: return QString::fromUtf8("μINCA");
+    case BTC: return QString("NKA");
+    case mBTC: return QString("mNKA");
+    case uBTC: return QString::fromUtf8("μNKA");
     default: return QString("???");
     }
 }

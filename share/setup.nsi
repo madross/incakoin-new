@@ -57,7 +57,7 @@ VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
 VIAddVersionKey CompanyWebsite "${URL}"
 VIAddVersionKey FileVersion "${VERSION}"
-VIAddVersionKey FileDescription "IncaKoin [INCA] SHA256D, Proof of Work+Proof of Stake"
+VIAddVersionKey FileDescription "IncaKoin [NKA] SHA256D, Proof of Work+Proof of Stake"
 VIAddVersionKey LegalCopyright ""
 InstallDirRegKey HKCU "${REGKEY}" Path
 ShowUninstDetails show
@@ -97,7 +97,7 @@ Section -post SEC0001
     WriteRegDWORD HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoModify 1
     WriteRegDWORD HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
     WriteRegStr HKCR "IncaKoin" "URL Protocol" ""
-    WriteRegStr HKCR "IncaKoin" "" "URL:Bitcoin"
+    WriteRegStr HKCR "IncaKoin" "" "URL:IncaKoin"
     WriteRegStr HKCR "IncaKoin\DefaultIcon" "" $INSTDIR\IncaKoin-qt.exe
     WriteRegStr HKCR "IncaKoin\shell\open\command" "" '"$INSTDIR\IncaKoin-qt.exe" "$$1"'
 SectionEnd

@@ -2,52 +2,75 @@
 # Distributed under the MIT/X11 software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-DEPSDIR:=/usr/i686-w64-mingw32
+ifndef TARGET_PLATFORM
+    TARGET_PLATFORM:=i686
+endif
 
-CC := i686-w64-mingw32-gcc
-CXX := i686-w64-mingw32-g++
+ifndef BOOST_LIB_SUFFIX
+    BOOST_LIB_SUFFIX:=-mt-s
+endif
+
+# MXE based build support
+ifndef DEPSDIR
+    DEPSDIR:=/usr/i686-w64-mingw32
+endif
+
+INCDIR:=$(DEPSDIR)/include
+LIBDIR:=$(DEPSDIR)/lib
+AR:=$(TARGET_PLATFORM)-w64-mingw32.static-ar
+CC:=$(TARGET_PLATFORM)-w64-mingw32.static-gcc
+CXX:=$(TARGET_PLATFORM)-w64-mingw32.static-g++
+RANLIB=$(TARGET_PLATFORM)-w64-mingw32.static-ranlib
+STRIP=$(TARGET_PLATFORM)-w64-mingw32.static-strip
 
 USE_UPNP:=0
 USE_IPV6:=1
 
 INCLUDEPATHS= \
  -I"$(CURDIR)" \
- -I"$(CURDIR)"/obj \
- -I"$(DEPSDIR)/include" \
+ -I"$(CURDIR)/obj" \
+ -I"$(INCDIR)/boost" \
+ -I"$(INCDIR)/openssl/include" \
+ -I"$(INCDIR)" \
  -I"$(DEPSDIR)"
 
 LIBPATHS= \
- -L"$(DEPSDIR)/lib"
+ -L"$(LIBDIR)"
 
 LIBS= \
- -l boost_system-mt-s \
- -l boost_filesystem-mt-s \
- -l boost_program_options-mt-s \
- -l boost_thread_win32-mt-s \
- -l boost_chrono-mt-s \
+ -l boost_system$(BOOST_LIB_SUFFIX) \
+ -l boost_filesystem$(BOOST_LIB_SUFFIX) \
+ -l boost_program_options$(BOOST_LIB_SUFFIX) \
+ -l boost_thread_win32$(BOOST_LIB_SUFFIX) \
+ -l boost_chrono$(BOOST_LIB_SUFFIX) \
  -l db_cxx \
  -l ssl \
- -l crypto
+ -l crypto \
+ -l z
+
+ifeq (${TARGET_PLATFORM}, i686)
+    EXT_OPTIONS=-msse2
+endif
 
 DEFS=-D_MT -DWIN32 -D_WINDOWS -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE
 DEBUGFLAGS=-g
-xCXXFLAGS=-O2 -w -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS) $(CXXFLAGS)
+xCXXFLAGS=-O2 $(EXT_OPTIONS) -w -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS) $(CXXFLAGS)
 # enable: ASLR, DEP and large address aware
 xLDFLAGS=-Wl,--dynamicbase -Wl,--nxcompat -Wl,--large-address-aware -static-libgcc -static-libstdc++ $(LDFLAGS)
 
 TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
 
 ifndef USE_UPNP
-	override USE_UPNP = -
+    override USE_UPNP = -
 endif
 ifneq (${USE_UPNP}, -)
-	LIBPATHS += -L"$(DEPSDIR)/miniupnpc"
-	LIBS += -l miniupnpc -l iphlpapi
-	DEFS += -DSTATICLIB -DUSE_UPNP=$(USE_UPNP)
+    LIBPATHS += -L"$(DEPSDIR)/miniupnpc"
+    LIBS += -l miniupnpc -l iphlpapi
+    DEFS += -DMINIUPNP_STATICLIB -DSTATICLIB -DUSE_UPNP=$(USE_UPNP)
 endif
 
 ifneq (${USE_IPV6}, -)
-	DEFS += -DUSE_IPV6=$(USE_IPV6)
+    DEFS += -DUSE_IPV6=$(USE_IPV6)
 endif
 
 LIBS += -l mingwthrd -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l mswsock -l shlwapi
