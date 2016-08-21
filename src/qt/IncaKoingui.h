@@ -114,12 +114,12 @@ private:
     QAction *aboutQtAction;
     QAction *openRPCConsoleAction;
     QAction *blockAction;
-	
+
     QSystemTrayIcon *trayIcon;
     Notificator *notificator;
     TransactionView *transactionView;
     RPCConsole *rpcConsole;
-	BlockBrowser *blockBrowser;
+    BlockBrowser *blockBrowser;
 
     QMovie *syncIconMovie;
 
@@ -169,7 +169,7 @@ private slots:
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */
     void gotoSendCoinsPage();
-	/** Show block explorer page */
+    /** Show block explorer page */
     void gotoBlockBrowser(QString transactionId = "");
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");

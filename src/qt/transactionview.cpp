@@ -128,18 +128,18 @@ TransactionView::TransactionView(QWidget *parent) :
     QAction *copyLabelAction = new QAction(tr("Copy label"), this);
     QAction *copyAmountAction = new QAction(tr("Copy amount"), this);
     QAction *editLabelAction = new QAction(tr("Edit label"), this);
-	QAction *copyTxID = new QAction(tr("Copy Tx ID"), this);
+    QAction *copyTxID = new QAction(tr("Copy Tx ID"), this);
     QAction *showDetailsAction = new QAction(tr("Show transaction details"), this);
-	QAction *showBlockBrowser = new QAction(tr("Show transaction in block explorer"), this);
+    QAction *showBlockBrowser = new QAction(tr("Show transaction in block explorer"), this);
 
     contextMenu = new QMenu();
     contextMenu->addAction(copyAddressAction);
     contextMenu->addAction(copyLabelAction);
     contextMenu->addAction(copyAmountAction);
     contextMenu->addAction(editLabelAction);
-	contextMenu->addAction(copyTxID);
+    contextMenu->addAction(copyTxID);
     contextMenu->addAction(showDetailsAction);
-	contextMenu->addAction(showBlockBrowser);
+    contextMenu->addAction(showBlockBrowser);
 
     // Connect actions
     connect(dateWidget, SIGNAL(activated(int)), this, SLOT(chooseDate(int)));
@@ -154,9 +154,9 @@ TransactionView::TransactionView(QWidget *parent) :
     connect(copyLabelAction, SIGNAL(triggered()), this, SLOT(copyLabel()));
     connect(copyAmountAction, SIGNAL(triggered()), this, SLOT(copyAmount()));
     connect(editLabelAction, SIGNAL(triggered()), this, SLOT(editLabel()));
-	connect(copyTxID, SIGNAL(triggered()), this, SLOT(copyTx()));
+    connect(copyTxID, SIGNAL(triggered()), this, SLOT(copyTx()));
     connect(showDetailsAction, SIGNAL(triggered()), this, SLOT(showDetails()));
-	connect(showBlockBrowser, SIGNAL(triggered()), this, SLOT(showBrowser()));
+    connect(showBlockBrowser, SIGNAL(triggered()), this, SLOT(showBrowser()));
 }
 
 void TransactionView::setModel(WalletModel *model)
@@ -186,12 +186,12 @@ void TransactionView::setModel(WalletModel *model)
                 TransactionTableModel::Date, 120);
         transactionView->horizontalHeader()->resizeSection(
                 TransactionTableModel::Type, 120);
-		#if QT_VERSION < 0x050000 // qt5
+#if QT_VERSION < 0x050000 // qt5
         transactionView->horizontalHeader()->setResizeMode(
                 TransactionTableModel::ToAddress, QHeaderView::Stretch);
-		#else
-		transactionView->horizontalHeader()->setSectionResizeMode(TransactionTableModel::ToAddress, QHeaderView::Stretch);
-		#endif
+#else
+        transactionView->horizontalHeader()->setSectionResizeMode(TransactionTableModel::ToAddress, QHeaderView::Stretch);
+#endif
         transactionView->horizontalHeader()->resizeSection(
                 TransactionTableModel::Amount, 100);
     }
@@ -328,9 +328,9 @@ void TransactionView::copyAmount()
     GUIUtil::copyEntryData(transactionView, 0, TransactionTableModel::FormattedAmountRole);
 }
 
-void TransactionView::copyTx()  
-{  
-    GUIUtil::copyEntryData(transactionView, 0, TransactionTableModel::TxIDRole);  
+void TransactionView::copyTx()
+{
+    GUIUtil::copyEntryData(transactionView, 0, TransactionTableModel::TxIDRole);
 }
 
 void TransactionView::editLabel()
@@ -453,7 +453,7 @@ void TransactionView::showBrowser()
     QModelIndexList selection = transactionView->selectionModel()->selectedRows();
     QString transactionId;
 
-	if(!selection.isEmpty())
+    if(!selection.isEmpty())
     transactionId = selection.at(0).data(TransactionTableModel::TxIDRole).toString();
 
  emit blockBrowserSignal(transactionId);

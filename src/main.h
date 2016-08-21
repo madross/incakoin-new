@@ -32,8 +32,8 @@ static const unsigned int MAX_INV_SZ = 50000;
 static const int64 MIN_TX_FEE = 0.001 * COIN;
 static const int64 MIN_RELAY_TX_FEE = MIN_TX_FEE;
 static const int64 MAX_MONEY = 76000000 * COIN;
-static const int64 MAX_MINT_PROOF_OF_WORK = 420 * COIN;	
-static const int64 MAX_MINT_PROOF_OF_STAKE = .01 * MAX_MINT_PROOF_OF_WORK;	
+static const int64 MAX_MINT_PROOF_OF_WORK = 420 * COIN;
+static const int64 MAX_MINT_PROOF_OF_STAKE = .01 * MAX_MINT_PROOF_OF_WORK;
 static const int64 MIN_TXOUT_AMOUNT = MIN_TX_FEE;
 static const unsigned int MAX_TX_COMMENT_LEN = 140; //140 character (Twitter) limitation
 
@@ -41,10 +41,10 @@ static const unsigned int MAX_TX_COMMENT_LEN = 140; //140 character (Twitter) li
 inline bool MoneyRange(int64 nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
 // Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp.
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
-/** Split Threshold Default */ 
-static const int64 DEF_SPLIT_AMOUNT = 1000000 * COIN; 
+/** Split Threshold Default */
+static const int64 DEF_SPLIT_AMOUNT = 1000000 * COIN;
 /** Split Threshold Max */
-static const int64 MAX_SPLIT_AMOUNT = 50000000 * COIN; 
+static const int64 MAX_SPLIT_AMOUNT = 50000000 * COIN;
 
 #ifdef USE_UPNP
 static const int fHaveUPnP = true;
