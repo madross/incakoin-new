@@ -517,11 +517,11 @@ void ParseParameters(int argc, const char* const argv[])
             pszValue = strchr(psz, '=');
             *pszValue++ = '\0';
         }
-        #ifdef WIN32
+#ifdef WIN32
         _strlwr(psz);
         if (psz[0] == '/')
             psz[0] = '-';
-        #endif
+#endif
         if (psz[0] != '-')
             break;
 

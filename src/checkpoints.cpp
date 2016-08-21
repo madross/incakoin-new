@@ -24,7 +24,7 @@ typedef std::map<int, uint256> MapCheckpoints;
 //
 static MapCheckpoints mapCheckpoints =
         boost::assign::map_list_of
-			( 0, uint256("0x0000060d4aa9bb1a283942c9a678fb48a1576825e4434c1d42506ef675d66a00"))
+            ( 0, uint256("0x0000060d4aa9bb1a283942c9a678fb48a1576825e4434c1d42506ef675d66a00"))
             ( 10, uint256("0x0000000010b9e833da86e6c70aa336e2bc2577643d452c28728231d7678cb8e8"))
             ( 100, uint256("0x00000000429af5f93cb6442bb079558b4e1b07c84581fc6056ea4fdf42d7c152"))
             ( 1000, uint256("0x00000000f8cf5f6c14ffa605d3cfd1fe62cf136b5f824be58c4f6858ac9f970a"))
@@ -40,7 +40,7 @@ static MapCheckpoints mapCheckpoints =
             ( 50000, uint256("0x0000000000b17be4e71fd9aa5e24e5e6c413ee56208ab6a457f0a4caabb0eba1"))
             ( 55000, uint256("0x0000000003e0c66b734b6c379a4a4aaacd0ac265c2e713f4ab47561ea44914b1"))
             ( 60000, uint256("0x00000000005e78ee217f7ef221549a1d6adf4281b04fa0640040f4d98e427284"))
-			( 65000, uint256("0x00000000003d3782015175830368fb90d05d0a263e21107bf03818d8931512cd"))
+            ( 65000, uint256("0x00000000003d3782015175830368fb90d05d0a263e21107bf03818d8931512cd"))
             ( 70000, uint256("0x00000000000ec634f4aadd5d6270586423958b764022ceb36d07f7d565c065d4"))
             ( 75000, uint256("0x00000000005595caf3a7731cd3d578bdbeadc5e0663e0bc0c0e87d4b46accc34"))
             ( 80000, uint256("0x00000000000ea76423ea507029eacff4b474d2d0355c12df2cd240073c500809"))
@@ -48,32 +48,32 @@ static MapCheckpoints mapCheckpoints =
             ( 90000, uint256("0x00000000001b0512304c26039f0ce2bd1853202b50a1b7e91757b455829f4a9e"))
             ( 95000, uint256("0x000000000002dee682bdf4254e127a6d8f8469cd1f787ea68322ad6a612d9a00"))
             ( 100000, uint256("0x00000000001493f9998a3335441d0e8a896018e44ae22488e312bbf6fd031c1e"))
-			( 105000, uint256("0x00000000002b794606309406d26a6501c9163523b206bad8aa83d507b0c770ea"))
+            ( 105000, uint256("0x00000000002b794606309406d26a6501c9163523b206bad8aa83d507b0c770ea"))
             ( 108518, uint256("0x000000000006972f9079e4b2126d2b4a994044993eab3dfff847839d400f8b7e"))
-			//Checpoints added 12/17/13
-			( 110000, uint256("0x00000000000fdfb9057f390a74f62c7cbe4fecca009481d8ebf482d20e1216f1"))
+            //Checpoints added 12/17/13
+            ( 110000, uint256("0x00000000000fdfb9057f390a74f62c7cbe4fecca009481d8ebf482d20e1216f1"))
             ( 115000, uint256("0x0000000000166e79e06399a78226ac8253ccf35e82e487de2b5f5136d39f7f31"))
             ( 120000, uint256("0x0000000000173730117bc928d573a7c5a553ec5e3fc40e5c58a61bc6048296e8"))
             ( 125000, uint256("0x00000000014c28720f49d0caf8b90b76d07ea033f7f7c74d348ab376d488267c"))
-			( 130000, uint256("0x0000000000238ae9e4ff5778e0d1203f13638d96477f29f99832ca4423e45ee4"))
+            ( 130000, uint256("0x0000000000238ae9e4ff5778e0d1203f13638d96477f29f99832ca4423e45ee4"))
             ( 135000, uint256("0x0000000000b5620505929f453eeaffca7bbad2d68f72835c2bfa611374cc4f3a"))
             ( 140000, uint256("0x000000000028cbc68fa232b3014625c34a1ef097689e144e9aabd46e3a543132"))
             ( 145000, uint256("0xb23b3e3e4e5d3d6c5d61d129f8f54e0fc942d16469ecbd3aff6012e88ce1b6bb"))
             ( 150000, uint256("0x000000000014be198b010e7e08bf1f75142b09f372fede65c8e3964e7a8e228e"))
             ( 155000, uint256("0x00000000000d73dfc4e22a4f975273c5fa8b155838bbfd8c57a33771b0bb75ec"))
             ( 157903, uint256("0x000000000004d9eea41fb35a654d39639263ebda1e05d5daec2cde830d255846"))
-			//Checkpoints added 1/19/14
-	    ( 160000, uint256("0x0000000000010f649663b4694fd2afe146f695af56b7527a566994715b3c9f5a"))
+            //Checkpoints added 1/19/14
+            ( 160000, uint256("0x0000000000010f649663b4694fd2afe146f695af56b7527a566994715b3c9f5a"))
             ( 165000, uint256("0x0000000000020b0c24beb38a51c76145fa0e68050a6501f33315b7912905778f"))
             ( 170000, uint256("0x0000000000044bb69e6d2f366435931a354a496d17a8a5f3dd58862f16bc9256"))
             ( 175000, uint256("0x000000000001d0d9d9a3c0926a386701e5b052afdf933e8cc160bcc4388a808b"))
-	    ( 180000, uint256("0x00000000000909a44001009404da8dcd5fa5eec1b3344c4b4c4c71e34db0c2c4"))
+            ( 180000, uint256("0x00000000000909a44001009404da8dcd5fa5eec1b3344c4b4c4c71e34db0c2c4"))
             ( 185000, uint256("0x000000000002a9db18e425202bc4c58aa82d1e7041b1e66d8b9d5aabfff31e3d"))
             ( 190000, uint256("0x0000000000028bafd0ac25798d200359495805b9e7cf04c43a930d959ff99055"))
             ( 195000, uint256("0x000000000000aca7ba8d2baa4327b64000d225acf89120cfeae4a695cb6faf91"))
             ( 200000, uint256("0x0000000000020bcc4d119515371240d0938b01439ce45195858a1907e845fbfd"))
             ( 205000, uint256("0x6c1c0b42de8a38a9e12abb7764c8a29166d6cbdd9d2557b453231c70097b3d1f"))
-        		//Checkpoints added 7/09/15  madross
+            //Checkpoints added 7/09/15  madross
             ( 300000, uint256("0x990254fedcbcd0e6849139b81354a0a35ff249f544d7487b48913d8a20e1ae7a"))
             ( 400000, uint256("0x000000000006d0361dced1e5e55af89b0b6e390c3cf31a4670e7ea065fde02e5"))
             ( 500000, uint256("0xcc578ddcdb9219ba5a982320a33f0d079e662d9035fb77e82faef2d7f19c8a09"))
@@ -81,7 +81,7 @@ static MapCheckpoints mapCheckpoints =
             ( 700000, uint256("0x000000000002963011deed2a29efb8c69196940a3c5677d259e615ce7c29a8f3"))
             ( 800000, uint256("0x1ef82de5c91dd6a021f53292b989bb2f0bb04d0ae49667e47cec94553a8b1569"))
             ( 900000, uint256("0x07c0a3bc95c8a06711d4877573e855d9abcb7e516f999ee7d983e71436681de1"))
-                       //checkpoints added 27/6/2016 madross
+            //checkpoints added 27/6/2016 madross
             ( 1000000, uint256("0x000000000010e31e98f9fe6fb77ed5b3b9c82a5ac6f9f7cd6676929fe85f7021"))
             ( 1200000, uint256("0x000000000019f5831f3aefb970c0902161979e81d10633334ee7720949dec8e6"))
             ( 1300000, uint256("0x00000000023288465717a01e87591feaf32e344fcf56d6b20be86180c736ffe6"))
@@ -250,11 +250,11 @@ static MapCheckpoints mapCheckpointsTestnet =
         return false;
     }
 
-    // Automatically select a suitable sync-checkpoint 
+    // Automatically select a suitable sync-checkpoint
     uint256 AutoSelectSyncCheckpoint()
     {
         // Proof-of-work blocks are immediately checkpointed
-        // to defend against 51% attack which rejects other miners block 
+        // to defend against 51% attack which rejects other miners block
 
         // Select the last proof-of-work block
         const CBlockIndex *pindex = GetLastBlockIndex(pindexBest, false);
@@ -299,7 +299,7 @@ static MapCheckpoints mapCheckpointsTestnet =
             return false;
         if (hashBlock == hashPendingCheckpoint)
             return true;
-        if (mapOrphanBlocks.count(hashPendingCheckpoint) 
+        if (mapOrphanBlocks.count(hashPendingCheckpoint)
             && hashBlock == WantedByOrphan(mapOrphanBlocks[hashPendingCheckpoint]))
             return true;
         return false;
@@ -412,12 +412,12 @@ static MapCheckpoints mapCheckpointsTestnet =
         // sync-checkpoint should always be accepted block
         assert(mapBlockIndex.count(hashSyncCheckpoint));
         const CBlockIndex* pindexSync = mapBlockIndex[hashSyncCheckpoint];
-		if (pindexSync->nTime > nForkTime) 
-		{ //Changed
-        return (nBestHeight >= pindexSync->nHeight + nCoinbaseMaturity ||
+        if (pindexSync->nTime > nForkTime)
+        { //Changed
+            return (nBestHeight >= pindexSync->nHeight + nCoinbaseMaturity ||
                 pindexSync->GetBlockTime() + nStakeMinAgeNew < GetAdjustedTime());
-		}else{
-		return (nBestHeight >= pindexSync->nHeight + nCoinbaseMaturity ||
+        } else {
+            return (nBestHeight >= pindexSync->nHeight + nCoinbaseMaturity ||
                 pindexSync->GetBlockTime() + nStakeMinAgeOld < GetAdjustedTime());}
     }
 

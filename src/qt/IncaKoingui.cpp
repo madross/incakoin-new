@@ -89,7 +89,7 @@ IncaKoinGUI::IncaKoinGUI(QWidget *parent):
     trayIcon(0),
     notificator(0),
     rpcConsole(0),
-	blockBrowser(0),
+    blockBrowser(0),
     nWeight(0)
 {
     resize(850, 550);
@@ -167,7 +167,7 @@ IncaKoinGUI::IncaKoinGUI(QWidget *parent):
     frameBlocksLayout->addStretch();
     frameBlocksLayout->addWidget(labelBlocksIcon);
     frameBlocksLayout->addStretch();
-    
+
 
     if (GetBoolArg("-staking", true)) {
         QTimer *timerStakingIcon = new QTimer(labelStakingIcon);
@@ -210,15 +210,15 @@ IncaKoinGUI::IncaKoinGUI(QWidget *parent):
 
     rpcConsole = new RPCConsole(this);
     connect(openRPCConsoleAction, SIGNAL(triggered()), rpcConsole, SLOT(show()));
-		
-	blockBrowser = new BlockBrowser(this);
+
+    blockBrowser = new BlockBrowser(this);
     connect(blockAction, SIGNAL(triggered()), blockBrowser, SLOT(show()));
 
     // Clicking on "Verify Message" in the address book sends you to the verify message tab
     connect(addressBookPage, SIGNAL(verifyMessage(QString)), this, SLOT(gotoVerifyMessageTab(QString)));
     // Clicking on "Sign Message" in the receive coins page sends you to the sign message tab
     connect(receiveCoinsPage, SIGNAL(signMessage(QString)), this, SLOT(gotoSignMessageTab(QString)));
-	// Clicking on "Block Explorer" in the transaction page sends you to the blockbrowser
+    // Clicking on "Block Explorer" in the transaction page sends you to the blockbrowser
     connect(transactionView, SIGNAL(blockBrowserSignal(QString)), this, SLOT(gotoBlockBrowser(QString)));
 
     gotoOverviewPage();
@@ -266,7 +266,7 @@ void IncaKoinGUI::createActions()
     addressBookAction->setCheckable(true);
     addressBookAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));
     tabGroup->addAction(addressBookAction);
-	
+
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
     connect(sendCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -310,7 +310,7 @@ void IncaKoinGUI::createActions()
     exportAction->setToolTip(tr("Export the data in the current tab to a file"));
     openRPCConsoleAction = new QAction(QIcon(":/icons/debugwindow"), tr("&Debug window"), this);
     openRPCConsoleAction->setToolTip(tr("Open debugging and diagnostic console"));
-	blockAction = new QAction(QIcon(":/icons/blexp"), tr("&Block Browser"), this);
+    blockAction = new QAction(QIcon(":/icons/blexp"), tr("&Block Browser"), this);
     blockAction->setToolTip(tr("Explore the BlockChain"));
 
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
@@ -325,7 +325,7 @@ void IncaKoinGUI::createActions()
     connect(lockWalletAction, SIGNAL(triggered()), this, SLOT(lockWallet()));
     connect(signMessageAction, SIGNAL(triggered()), this, SLOT(gotoSignMessageTab()));
     connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(gotoVerifyMessageTab()));
-	connect(blockAction, SIGNAL(triggered()), this, SLOT(gotoBlockBrowser()));
+    connect(blockAction, SIGNAL(triggered()), this, SLOT(gotoBlockBrowser()));
 }
 
 void IncaKoinGUI::createMenuBar()
@@ -756,7 +756,7 @@ void IncaKoinGUI::gotoBlockBrowser(QString transactionId)
 {
     if(!transactionId.isEmpty())
     blockBrowser->setTransactionId(transactionId);
-    
+
     blockBrowser->show();
 }
 
@@ -893,13 +893,13 @@ void IncaKoinGUI::encryptWallet(bool status)
 
 void IncaKoinGUI::backupWallet()
 {
-	#if QT_VERSION < 0x050000 //presstab qt5
+#if QT_VERSION < 0x050000 //presstab qt5
     QString saveDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
-    #else
-	QString saveDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-	#endif
-	
-	QString filename = QFileDialog::getSaveFileName(this, tr("Backup Wallet"), saveDir, tr("Wallet Data (*.dat)"));
+#else
+    QString saveDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+#endif
+
+    QString filename = QFileDialog::getSaveFileName(this, tr("Backup Wallet"), saveDir, tr("Wallet Data (*.dat)"));
     if(!filename.isEmpty()) {
         if(!walletModel->backupWallet(filename)) {
             QMessageBox::warning(this, tr("Backup Failed"), tr("There was an error trying to save the wallet data to the new location."));

@@ -1,4 +1,4 @@
-# figure out 
+# figure out
 win32 {
     !contains(QMAKE_HOST.arch, x86_64) {
         message("x86 build")

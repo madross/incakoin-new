@@ -39,13 +39,13 @@ SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
 
     connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addEntry()));
     connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(clear()));
-	
-	// Coin Control
+
+    // Coin Control
      ui->lineEditCoinControlChange->setFont(GUIUtil::IncaKoinAddressFont());
      connect(ui->pushButtonCoinControl, SIGNAL(clicked()), this, SLOT(coinControlButtonClicked()));
      connect(ui->checkBoxCoinControlChange, SIGNAL(stateChanged(int)), this, SLOT(coinControlChangeChecked(int)));
      connect(ui->lineEditCoinControlChange, SIGNAL(textEdited(const QString &)), this, SLOT(coinControlChangeEdited(const QString &)));
- 
+
      // Coin Control: clipboard actions
      QAction *clipboardQuantityAction = new QAction(tr("Copy quantity"), this);
      QAction *clipboardAmountAction = new QAction(tr("Copy amount"), this);
@@ -92,8 +92,8 @@ void SendCoinsDialog::setModel(WalletModel *model)
         setBalance(model->getBalance(), model->getStake(), model->getUnconfirmedBalance(), model->getImmatureBalance());
         connect(model, SIGNAL(balanceChanged(qint64, qint64, qint64, qint64)), this, SLOT(setBalance(qint64, qint64, qint64, qint64)));
         connect(model->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
-		
-		// Coin Control 
+
+        // Coin Control
         connect(model->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(coinControlUpdateLabels()));
         connect(model->getOptionsModel(), SIGNAL(coinControlFeaturesChanged(bool)), this, SLOT(coinControlFeatureChanged(bool)));
         connect(model->getOptionsModel(), SIGNAL(transactionFeeChanged(qint64)), this, SLOT(coinControlUpdateLabels()));
@@ -142,12 +142,12 @@ void SendCoinsDialog::on_sendButton_clicked()
     QStringList formatted;
     foreach(const SendCoinsRecipient &rcp, recipients)
     {
-	#if QT_VERSION < 0x050000 // qt5
+#if QT_VERSION < 0x050000 // qt5
         formatted.append(tr("<b>%1</b> to %2 (%3)").arg(IncaKoinUnits::formatWithUnit(IncaKoinUnits::BTC, rcp.amount), Qt::escape(rcp.label), rcp.address));
-    #else
-		formatted.append(tr("<b>%1</b> to %2 (%3)").arg(IncaKoinUnits::formatWithUnit(IncaKoinUnits::BTC, rcp.amount), rcp.label.toHtmlEscaped(), rcp.address));
-	#endif
-	}
+#else
+        formatted.append(tr("<b>%1</b> to %2 (%3)").arg(IncaKoinUnits::formatWithUnit(IncaKoinUnits::BTC, rcp.amount), rcp.label.toHtmlEscaped(), rcp.address));
+#endif
+    }
 
     fNewRecipientAllowed = false;
 
@@ -217,9 +217,9 @@ void SendCoinsDialog::on_sendButton_clicked()
         break;
     case WalletModel::OK:
         accept();
-		CoinControlDialog::coinControl->UnSelectAll(); 
-		coinControlUpdateLabels(); 
-		
+        CoinControlDialog::coinControl->UnSelectAll();
+        coinControlUpdateLabels();
+
         break;
     }
     fNewRecipientAllowed = true;
@@ -255,8 +255,8 @@ SendCoinsEntry *SendCoinsDialog::addEntry()
     entry->setModel(model);
     ui->entries->addWidget(entry);
     connect(entry, SIGNAL(removeEntry(SendCoinsEntry*)), this, SLOT(removeEntry(SendCoinsEntry*)));
-	connect(entry, SIGNAL(payAmountChanged()), this, SLOT(coinControlUpdateLabels())); 
-	
+    connect(entry, SIGNAL(payAmountChanged()), this, SLOT(coinControlUpdateLabels()));
+
     updateRemoveEnabled();
 
     // Focus the field, so that entry can start immediately
@@ -283,8 +283,8 @@ void SendCoinsDialog::updateRemoveEnabled()
         }
     }
     setupTabChain(0);
-	
-	coinControlUpdateLabels(); 
+
+    coinControlUpdateLabels();
 }
 
 void SendCoinsDialog::removeEntry(SendCoinsEntry* entry)
@@ -293,7 +293,7 @@ void SendCoinsDialog::removeEntry(SendCoinsEntry* entry)
     updateRemoveEnabled();
 }
 
-QWidget *SendCoinsDialog::setupTabChain(QWidget *prev) 
+QWidget *SendCoinsDialog::setupTabChain(QWidget *prev)
 {
     for(int i = 0; i < ui->entries->count(); ++i)
     {
@@ -421,7 +421,7 @@ void SendCoinsDialog::coinControlClipboardChange()
 void SendCoinsDialog::coinControlFeatureChanged(bool checked)
 {
     ui->frameCoinControl->setVisible(checked);
-    
+
     if (!checked && model) // coin control features disabled
         CoinControlDialog::coinControl->SetNull();
 }
@@ -445,7 +445,7 @@ void SendCoinsDialog::coinControlChangeChecked(int state)
         else
             CoinControlDialog::coinControl->destChange = CNoDestination();
     }
-    
+
     ui->lineEditCoinControlChange->setEnabled((state == Qt::Checked));
     ui->labelCoinControlChangeLabel->setEnabled((state == Qt::Checked));
 }
@@ -456,7 +456,7 @@ void SendCoinsDialog::coinControlChangeEdited(const QString & text)
     if (model)
     {
         CoinControlDialog::coinControl->destChange = CIncaKoinAddress(text.toStdString()).Get();
-        
+
         // label for the change address
         ui->labelCoinControlChangeLabel->setStyleSheet("QLabel{color:black;}");
         if (text.isEmpty())
@@ -475,7 +475,7 @@ void SendCoinsDialog::coinControlChangeEdited(const QString & text)
             {
                 CPubKey pubkey;
                 CKeyID keyid;
-                CIncaKoinAddress(text.toStdString()).GetKeyID(keyid);   
+                CIncaKoinAddress(text.toStdString()).GetKeyID(keyid);
                 if (model->getPubKey(keyid, pubkey))
                     ui->labelCoinControlChangeLabel->setText(tr("(no label)"));
                 else
@@ -493,7 +493,7 @@ void SendCoinsDialog::coinControlUpdateLabels()
 {
     if (!model || !model->getOptionsModel() || !model->getOptionsModel()->getCoinControlFeatures())
         return;
-    
+
     // set pay amounts
     CoinControlDialog::payAmounts.clear();
     for(int i = 0; i < ui->entries->count(); ++i)
@@ -502,12 +502,12 @@ void SendCoinsDialog::coinControlUpdateLabels()
         if(entry)
             CoinControlDialog::payAmounts.append(entry->getValue().amount);
     }
-        
+
     if (CoinControlDialog::coinControl->HasSelected())
     {
         // actual coin control calculation
         CoinControlDialog::updateLabels(model, this);
-        
+
         // show coin control stats
         ui->labelCoinControlAutomaticallySelected->hide();
         ui->widgetCoinControl->show();

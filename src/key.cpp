@@ -379,7 +379,7 @@ bool CKey::Verify(uint256 hash, const std::vector<unsigned char>& vchSigParam)
     {
         unsigned char nLengthBytes = vchSig[1] & 0x7f;
 
-	if (vchSig.size() < 2 + nLengthBytes)
+    if (vchSig.size() < 2 + nLengthBytes)
              return false;
 
         if (nLengthBytes > 4)
@@ -392,7 +392,7 @@ bool CKey::Verify(uint256 hash, const std::vector<unsigned char>& vchSigParam)
             vchSig[1] = 0x80 | (nLengthBytes - nExtraBytes);
         }
     }
- 
+
     if (vchSig.empty())
         return false;
 
@@ -416,7 +416,7 @@ bool CKey::Verify(uint256 hash, const std::vector<unsigned char>& vchSigParam)
      ECDSA_SIG_free(norm_sig);
      if (derlen <= 0)
          return false;
- 
+
      // -1 = error, 0 = bad sig, 1 = good
      bool ret = ECDSA_verify(0, (unsigned char*)&hash, sizeof(hash), norm_der, derlen, pkey) == 1;
      OPENSSL_free(norm_der);

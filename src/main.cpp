@@ -49,7 +49,7 @@ unsigned int nStakeMinAgeOld = 60 * 60 * 24 * 90; // Old minimum age for coin ag
 unsigned int nStakeMinAgeNew = 60 * 60 * 24 * 35; // New minimum age for coin age
 unsigned int nStakeMaxAge = 60 * 60 * 24 * 180; // stake age of full weight
 unsigned int nStakeTargetSpacing = 60; // 60 seconds block spacing
-const int64 nChainStartTime = 1377538838; 
+const int64 nChainStartTime = 1377538838;
 const int64 nTestNetStartTime = nChainStartTime; // 2013-08-03 18:00:00 GMT
 int nCoinbaseMaturity = 4980; // mining need 5000 confirm
 CBlockIndex* pindexGenesisBlock = NULL;
@@ -951,7 +951,7 @@ uint256 WantedByOrphan(const CBlock* pblockOrphan)
 int64 GetProofOfWorkReward(int nHeight, int64 nFees, uint256 prevHash)
 {
 
-int64 nSubsidy = 420 * COIN; 
+int64 nSubsidy = 420 * COIN;
 
     nSubsidy >>= (nHeight / 280000); // Halving roughly every 6 months
     return nSubsidy + nFees;
@@ -959,7 +959,7 @@ int64 nSubsidy = 420 * COIN;
 // miner's coin stake reward based on nBits and coin age spent (coin-days)
 int64 GetProofOfStakeReward(int64 nCoinAge, unsigned int nBits, unsigned int nTime)
 {
-	if (nTime < nForkTime) {
+    if (nTime < nForkTime) {
     int64 nRewardCoinYear;
 
     // Stage 2 of emission process is PoS-based. It will be active on mainNet since 20 Jun 2013.
@@ -999,21 +999,22 @@ int64 GetProofOfStakeReward(int64 nCoinAge, unsigned int nBits, unsigned int nTi
     if (fDebug && GetBoolArg("-printcreation"))
         printf("GetProofOfStakeReward(): create=%s nCoinAge=%"PRI64d" nBits=%d\n", FormatMoney(nSubsidy).c_str(), nCoinAge, nBits);
 
-    return nSubsidy; 
+    return nSubsidy;
  }
-	// New Emission
-		int64 nRewardCoinYear = 9 * CENT;
-		int64 nSubsidy;
-		
-	// Fix for abnormally low staking values. Change to 9% every 5 weeks.
-		if (nTime < nStakeFixForkTime)
-				nSubsidy = nCoinAge * nRewardCoinYear / 365 / COIN;
-		else {
-				nRewardCoinYear = 94 * CENT;
-				nSubsidy = nCoinAge * nRewardCoinYear / 365;
-			 }
+    // New Emission
+        int64 nRewardCoinYear = 9 * CENT;
+        int64 nSubsidy;
 
-		return nSubsidy;
+    // Fix for abnormally low staking values. Change to 9% every 5 weeks.
+        if (nTime < nStakeFixForkTime)
+        {
+                nSubsidy = nCoinAge * nRewardCoinYear / 365 / COIN;
+        } else {
+                nRewardCoinYear = 94 * CENT;
+                nSubsidy = nCoinAge * nRewardCoinYear / 365;
+        }
+
+        return nSubsidy;
 }
 
 static const int64 nTargetTimespan = 0.16 * 24 * 60 * 60;  // 4-hour
@@ -1933,14 +1934,16 @@ bool CTransaction::GetCoinAge(CTxDB& txdb, uint64& nCoinAge) const
 
         // Read block header
         CBlock block;
-		
-		unsigned int nStakeMinAge;
-		
-		if (nTime > nForkTime)
-			nStakeMinAge = nStakeMinAgeNew;
-		else
-			nStakeMinAge = nStakeMinAgeOld;
-		
+
+        unsigned int nStakeMinAge;
+
+        if (nTime > nForkTime)
+        {
+            nStakeMinAge = nStakeMinAgeNew;
+        } else {
+            nStakeMinAge = nStakeMinAgeOld;
+        }
+
         if (!block.ReadFromDisk(txindex.pos.nFile, txindex.pos.nBlockPos, false))
             return false; // unable to read block of previous transaction
         if (block.GetBlockTime() + nStakeMinAge > nTime)
@@ -2592,7 +2595,7 @@ bool LoadBlockIndex(bool fAllowNew)
         block.nNonce   = 521805;
 
         if (IsCalculatingGenesisBlockHash && (block.GetHash() != hashGenesisBlock)) {
-			block.nNonce = 0;
+            block.nNonce = 0;
 
             // This will figure out a valid hash and Nonce if you're
             // creating a different genesis block:
@@ -2605,10 +2608,10 @@ bool LoadBlockIndex(bool fAllowNew)
                     printf("NONCE WRAPPED, incrementing time");
                     ++block.nTime;
                 }
-				if (block.nNonce % 10000 == 0)
-				{
-					printf("nonce %08u: hash = %s \n", block.nNonce, block.GetHash().ToString().c_str());
-				}
+                if (block.nNonce % 10000 == 0)
+                {
+                    printf("nonce %08u: hash = %s \n", block.nNonce, block.GetHash().ToString().c_str());
+                }
             }
         }
 
@@ -2841,14 +2844,14 @@ string GetWarnings(string strFor)
         strStatusBar = strMiscWarning;
     }
 
-    // Should not enter safe mode for longer invalid chain 
-    // If sync-checkpoint is too old do not enter safe mode 
-    // Display warning only in the STRICT mode 
-//    if (CheckpointsMode == Checkpoints::STRICT && Checkpoints::IsSyncCheckpointTooOld(60 * 60 * 24 * 10) && !fTestNet && !IsInitialBlockDownload()) 
-//    { 
-//        nPriority = 100; 
-//        strStatusBar = _("WARNING: Checkpoint is too old. Wait for block chain to download, or notify developers."); 
-//    } 
+    // Should not enter safe mode for longer invalid chain
+    // If sync-checkpoint is too old do not enter safe mode
+    // Display warning only in the STRICT mode
+//    if (CheckpointsMode == Checkpoints::STRICT && Checkpoints::IsSyncCheckpointTooOld(60 * 60 * 24 * 10) && !fTestNet && !IsInitialBlockDownload())
+//    {
+//        nPriority = 100;
+//        strStatusBar = _("WARNING: Checkpoint is too old. Wait for block chain to download, or notify developers.");
+//    }
 
     // if detected invalid checkpoint enter safe mode
     if (Checkpoints::hashInvalidCheckpoint != 0)
@@ -3288,13 +3291,13 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         {
             if (pindex->GetBlockHash() == hashStop)
             {
-				unsigned int nStakeMinAge;
-				
-				if (pindex->nTime > nForkTime)
-					nStakeMinAge = nStakeMinAgeNew;
-				else
-					nStakeMinAge = nStakeMinAgeOld;
-					
+                unsigned int nStakeMinAge;
+
+                if (pindex->nTime > nForkTime)
+                    nStakeMinAge = nStakeMinAgeNew;
+                else
+                    nStakeMinAge = nStakeMinAgeOld;
+
                 printf("  getblocks stopping at %d %s\n", pindex->nHeight, pindex->GetBlockHash().ToString().substr(0,20).c_str());
                 // ppcoin: tell downloading node about the latest block if it's
                 // without risk being rejected due to stake connection check
@@ -4412,8 +4415,8 @@ void IncaKoinMiner(CWallet *pwallet, bool fProofOfStake)
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
 
     // Make this thread recognisable as the mining thread
-    RenameThread("tekcoin-miner");
-	
+    RenameThread("incakoin-miner");
+
     bool fTryToSync = true;
 
     // Each thread has its own key and counter
@@ -4441,7 +4444,7 @@ void IncaKoinMiner(CWallet *pwallet, bool fProofOfStake)
                 return;
         }
 
-		    if (fTryToSync)
+        if (fTryToSync)
         {
             fTryToSync = false;
             if (vNodes.size() < 3 || nBestHeight < GetNumBlocksOfPeers())

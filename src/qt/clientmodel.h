@@ -43,7 +43,7 @@ public:
     bool isReleaseVersion() const;
     QString clientName() const;
     QString formatClientStartupTime() const;
-	double GetDifficulty() const;
+    double GetDifficulty() const;
 
 private:
     OptionsModel *optionsModel;

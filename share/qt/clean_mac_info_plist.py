@@ -14,9 +14,9 @@ version    = "unknown";
 
 fileForGrabbingVersion = bitcoinDir+"bitcoin-qt.pro"
 for line in open(fileForGrabbingVersion):
-	lineArr = line.replace(" ", "").split("=");
-	if lineArr[0].startswith("VERSION"):
-		version = lineArr[1].replace("\n", "");
+    lineArr = line.replace(" ", "").split("=");
+    if lineArr[0].startswith("VERSION"):
+        version = lineArr[1].replace("\n", "");
 
 fIn = open(inFile, "r")
 fileContent = fIn.read()

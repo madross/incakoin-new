@@ -131,14 +131,14 @@ std::string getOutputs(std::string txid)
     for (unsigned int i = (tx.IsCoinStake() ? 1 : 0); i < tx.vout.size(); i++)
     {
         const CTxOut& txout = tx.vout[i];
-		
+
         CTxDestination address;
         if (!ExtractDestination(txout.scriptPubKey, address) )
             address = CNoDestination();
-			
+
         double buffer = convertCoins(txout.nValue);
         std::string amount = boost::to_string(buffer);
-		str.append(CIncaKoinAddress(address).ToString());
+        str.append(CIncaKoinAddress(address).ToString());
         str.append(": ");
         str.append(amount);
         str.append(" NKA");
@@ -163,7 +163,7 @@ std::string getInputs(std::string txid)
     {
         uint256 hash;
         const CTxIn& vin = tx.vin[i];
-		
+
         hash.SetHex(vin.prevout.hash.ToString());
         CTransaction wtxPrev;
         uint256 hashBlock = 0;
@@ -193,18 +193,18 @@ double BlockBrowser::getTxFees(std::string txid)
 
     CTransaction tx;
     uint256 hashBlock = 0;
-	CTxDB txdb("r");
-	
+    CTxDB txdb("r");
+
     if (!GetTransaction(hash, tx, hashBlock))
         return convertCoins(MIN_TX_FEE);
 
     MapPrevTx mapInputs;
     map<uint256, CTxIndex> mapUnused;
-	bool fInvalid;
+    bool fInvalid;
 
     if (!tx.FetchInputs(txdb, mapUnused, false, false, mapInputs, fInvalid))
-	      return convertCoins(MIN_TX_FEE);
-		  
+          return convertCoins(MIN_TX_FEE);
+
     int64 nTxFees = tx.GetValueIn(mapInputs)-tx.GetValueOut();
 
     if(tx.IsCoinStake() || tx.IsCoinBase()) {
@@ -213,7 +213,7 @@ double BlockBrowser::getTxFees(std::string txid)
     }
     else
         ui->feesLabel->setText(QString("Fees:"));
-		
+
     return convertCoins(nTxFees);
 }
 
@@ -224,75 +224,75 @@ BlockBrowser::BlockBrowser(QWidget *parent) :
     ui->setupUi(this);
 
     setBaseSize(850, 524);
-        
+
     connect(ui->blockButton, SIGNAL(pressed()), this, SLOT(blockClicked()));
     connect(ui->txButton, SIGNAL(pressed()), this, SLOT(txClicked()));
     connect(ui->closeButton, SIGNAL(pressed()), this, SLOT(close()));
 }
 
 void BlockBrowser::updateExplorer(bool block)
-{    
+{
     if(block)
-	{
-	    int64 height = ui->heightBox->value(); 
-        if (height > pindexBest->nHeight) 
-        { 
-            ui->heightBox->setValue(pindexBest->nHeight); 
-            height = pindexBest->nHeight; 
-        } 
- 
-        const CBlockIndex* pindex = getBlockIndex(height);
-	
-        ui->heightLabelBE1->setText(QString::number(height)); 
-        ui->hashBox->setText(QString::fromUtf8(getBlockHash(height).c_str())); 
-        ui->merkleBox->setText(QString::fromUtf8(getBlockMerkle(height).c_str())); 
-        ui->bitsBox->setText(QString::number(getBlocknBits(height))); 
-        ui->nonceBox->setText(QString::number(getBlockNonce(height))); 
-        ui->timeBox->setText(QString::fromUtf8(DateTimeStrFormat(getBlockTime(height)).c_str())); 
-        ui->diffBox->setText(QString::number(GetDifficulty(pindex), 'f', 6));
-        if (pindex->IsProofOfStake()) { 
- //           ui->hashRateLabel->setText("Block Network Stake Weight:");
-            ui->diffLabel->setText("PoS Block Difficulty:");			
- //           ui->hashRateBox->setText(QString::number(GetPoSKernelPS(pindex), 'f', 3) + " ");
-        } 
-        else { 
- //           ui->hashRateLabel->setText("Block Hash Rate:");
-            ui->diffLabel->setText("PoW Block Difficulty:");
- //           ui->hashRateBox->setText(QString::number(GetPoWMHashPS(pindex), 'f', 3) + " MH/s");
+    {
+        int64 height = ui->heightBox->value();
+        if (height > pindexBest->nHeight)
+        {
+            ui->heightBox->setValue(pindexBest->nHeight);
+            height = pindexBest->nHeight;
         }
-    } 
-    
+
+        const CBlockIndex* pindex = getBlockIndex(height);
+
+        ui->heightLabelBE1->setText(QString::number(height));
+        ui->hashBox->setText(QString::fromUtf8(getBlockHash(height).c_str()));
+        ui->merkleBox->setText(QString::fromUtf8(getBlockMerkle(height).c_str()));
+        ui->bitsBox->setText(QString::number(getBlocknBits(height)));
+        ui->nonceBox->setText(QString::number(getBlockNonce(height)));
+        ui->timeBox->setText(QString::fromUtf8(DateTimeStrFormat(getBlockTime(height)).c_str()));
+        ui->diffBox->setText(QString::number(GetDifficulty(pindex), 'f', 6));
+        if (pindex->IsProofOfStake()) {
+            //ui->hashRateLabel->setText("Block Network Stake Weight:");
+            ui->diffLabel->setText("PoS Block Difficulty:");
+            //ui->hashRateBox->setText(QString::number(GetPoSKernelPS(pindex), 'f', 3) + " ");
+        }
+        else {
+            //ui->hashRateLabel->setText("Block Hash Rate:");
+            ui->diffLabel->setText("PoW Block Difficulty:");
+            //ui->hashRateBox->setText(QString::number(GetPoWMHashPS(pindex), 'f', 3) + " MH/s");
+        }
+    }
+
     else {
         std::string txid = ui->txBox->text().toUtf8().constData();
-        ui->valueBox->setText(QString::number(getTxTotalValue(txid), 'f', 6) + " NKA"); 
-        ui->txID->setText(QString::fromUtf8(txid.c_str())); 
-        ui->outputBox->setText(QString::fromUtf8(getOutputs(txid).c_str())); 
-        ui->inputBox->setText(QString::fromUtf8(getInputs(txid).c_str())); 
-        ui->feesBox->setText(QString::number(getTxFees(txid), 'f', 6) + " NKA"); 
+        ui->valueBox->setText(QString::number(getTxTotalValue(txid), 'f', 6) + " NKA");
+        ui->txID->setText(QString::fromUtf8(txid.c_str()));
+        ui->outputBox->setText(QString::fromUtf8(getOutputs(txid).c_str()));
+        ui->inputBox->setText(QString::fromUtf8(getInputs(txid).c_str()));
+        ui->feesBox->setText(QString::number(getTxFees(txid), 'f', 6) + " NKA");
     }
 }
 
- void BlockBrowser::setTransactionId(const QString &transactionId) 
- { 
-     ui->txBox->setText(transactionId); 
-     ui->txBox->setFocus(); 
-     updateExplorer(false); 
-  
-     uint256 hash; 
-     hash.SetHex(transactionId.toStdString()); 
-  
-     CTransaction tx; 
-     uint256 hashBlock = 0; 
-     if (GetTransaction(hash, tx, hashBlock)) 
-     { 
-         CBlockIndex* pblockindex = mapBlockIndex[hashBlock]; 
-         if (!pblockindex) 
-             ui->heightBox->setValue(nBestHeight); 
-         else 
-             ui->heightBox->setValue(pblockindex->nHeight); 
-         updateExplorer(true); 
-     } 
- } 
+ void BlockBrowser::setTransactionId(const QString &transactionId)
+ {
+     ui->txBox->setText(transactionId);
+     ui->txBox->setFocus();
+     updateExplorer(false);
+
+     uint256 hash;
+     hash.SetHex(transactionId.toStdString());
+
+     CTransaction tx;
+     uint256 hashBlock = 0;
+     if (GetTransaction(hash, tx, hashBlock))
+     {
+         CBlockIndex* pblockindex = mapBlockIndex[hashBlock];
+         if (!pblockindex)
+             ui->heightBox->setValue(nBestHeight);
+         else
+             ui->heightBox->setValue(pblockindex->nHeight);
+         updateExplorer(true);
+     }
+ }
 
 void BlockBrowser::txClicked()
 {
