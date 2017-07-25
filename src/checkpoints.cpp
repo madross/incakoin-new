@@ -95,6 +95,7 @@ static MapCheckpoints mapCheckpoints =
             ( 1700000, uint256("0x00000000081e77dff6fd5ca48b1012d2c04f6d59e09b5cf0b0bc8a74c78c205b"))
             ( 1800000, uint256("0x00000000006734c1736337acc694e74cbb674763c91cff56a0d014c48d8f2167"))
             ( 1900000, uint256("0x0000000006aa7494b327e2767eb790176917925395f794dd7fb708b39fd1bab9"))
+            ( 2035400, uint256(""))
         ;
 
 
@@ -105,7 +106,7 @@ static MapCheckpoints mapCheckpointsTestnet =
 
     bool CheckHardened(int nHeight, const uint256& hash)
     {
-        MapCheckpoints& checkpoints = (fTestNet ? mapCheckpointsTestnet : mapCheckpoints);
+        MapCheckpoints& checkpoints = (fTestNet? mapCheckpointsTestnet : mapCheckpoints);
 
         MapCheckpoints::const_iterator i = checkpoints.find(nHeight);
         if (i == checkpoints.end()) return true;
