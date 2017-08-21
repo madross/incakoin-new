@@ -6,11 +6,11 @@ Max 190 million Proof of Work Coins
 
 9% stake every 5 weeks 
 
-26.25 coins per block, halving every ~6 months
+100 coins per block starting september 10th , halving every ~6 months
 
 1 minute block targets
 
-5000 blocks to coin maturation
+1000 blocks to coin maturation
 
 Public Address Key: 53 "N"
 
