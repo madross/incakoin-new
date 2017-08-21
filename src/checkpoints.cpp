@@ -7,6 +7,7 @@
 
 #include "checkpoints.h"
 
+#include "base58.h"
 #include "db.h"
 #include "main.h"
 #include "uint256.h"
@@ -95,7 +96,9 @@ static MapCheckpoints mapCheckpoints =
             ( 1700000, uint256("0x00000000081e77dff6fd5ca48b1012d2c04f6d59e09b5cf0b0bc8a74c78c205b"))
             ( 1800000, uint256("0x00000000006734c1736337acc694e74cbb674763c91cff56a0d014c48d8f2167"))
             ( 1900000, uint256("0x0000000006aa7494b327e2767eb790176917925395f794dd7fb708b39fd1bab9"))
-            ( 2035400, uint256(""))
+
+            //checkpoints added 21/8/2017 presstab
+            ( 2064500, uint256("0x00000000015848cf381157b335786667402b58a4d171ece58dd1793853279c4e"))
         ;
 
 
@@ -391,9 +394,17 @@ static MapCheckpoints mapCheckpointsTestnet =
 
         if (CSyncCheckpoint::strMasterPrivKey.empty())
             return error("SendSyncCheckpoint: Checkpoint master key unavailable.");
-        std::vector<unsigned char> vchPrivKey = ParseHex(CSyncCheckpoint::strMasterPrivKey);
+
+        CIncaKoinSecret vchSecret;
+        bool fGood = vchSecret.SetString(CSyncCheckpoint::strMasterPrivKey);
+
+        if (!fGood) return error("SendSyncCheckpoint: Invalid private key");
+
         CKey key;
-        key.SetPrivKey(CPrivKey(vchPrivKey.begin(), vchPrivKey.end())); // if key is not correct openssl may crash
+        bool fCompressed;
+        CSecret secret = vchSecret.GetSecret(fCompressed);
+        key.SetSecret(secret, fCompressed);
+
         if (!key.Sign(Hash(checkpoint.vchMsg.begin(), checkpoint.vchMsg.end()), checkpoint.vchSig))
             return error("SendSyncCheckpoint: Unable to sign checkpoint, check private key?");
 
@@ -440,7 +451,7 @@ static MapCheckpoints mapCheckpointsTestnet =
 }
 
 // ppcoin: sync-checkpoint master key
-const std::string CSyncCheckpoint::strMasterPubKey = "04bae91a4a97c745234755202e3155a4c9bbb0502c49a0a215ca0dc977fc811d5bbfe9ce071fe968928696cd9ef9fa43dd8765462019d19018f722235d4b8c4360";
+const std::string CSyncCheckpoint::strMasterPubKey = "04ffd13c9955ff0a38d074419507148a092d0ae9b15a04c3f1468a1d6b74e48181d8987d0474687e8f5d432c3072c26531fc52886f38d41f3e51ce1cd971096d56";
 
 std::string CSyncCheckpoint::strMasterPrivKey = "";
 

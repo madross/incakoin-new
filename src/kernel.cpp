@@ -329,6 +329,10 @@ bool CheckStakeKernelHash(unsigned int nBits, const CBlock& blockFrom, unsigned 
     int64 nTimeWeight = min((int64)nTimeTx - txPrev.nTime, (int64)nStakeMaxAge) - nStakeMinAge;
     CBigNum bnCoinDayWeight = CBigNum(nValueIn) * nTimeWeight / COIN / (24 * 60 * 60);
 
+    //presstab: internally raise the weight calculation in order to make staking and PoS difficulty work better together
+    if (nTimeTx > FORKTIME_REORG_PROTO_CHANGES)
+        bnCoinDayWeight *= 100;
+
     // Calculate hash
     CDataStream ss(SER_GETHASH, 0);
     uint64 nStakeModifier = 0;

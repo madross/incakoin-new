@@ -36,6 +36,8 @@ static const int64 MAX_MINT_PROOF_OF_WORK = 420 * COIN;
 static const int64 MAX_MINT_PROOF_OF_STAKE = .01 * MAX_MINT_PROOF_OF_WORK;
 static const int64 MIN_TXOUT_AMOUNT = MIN_TX_FEE;
 static const unsigned int MAX_TX_COMMENT_LEN = 140; //140 character (Twitter) limitation
+static const int MAX_REORG_DEPTH = 50;
+static const unsigned int FORKTIME_REORG_PROTO_CHANGES = 1505075400; // time (GMT): Sunday, September 10, 2017 8:30:00 PM
 
 
 inline bool MoneyRange(int64 nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
@@ -117,7 +119,7 @@ void IncrementExtraNonce(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& 
 void FormatHashBuffers(CBlock* pblock, char* pmidstate, char* pdata, char* phash1);
 bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey);
 bool CheckProofOfWork(uint256 hash, unsigned int nBits);
-int64 GetProofOfWorkReward(int nHeight, int64 nFees, uint256 prevHash);
+int64 GetProofOfWorkReward(int nHeight, int64 nFees, uint256 prevHash, unsigned int nTime);
 int64 GetProofOfStakeReward(int64 nCoinAge, unsigned int nBits, unsigned int nTime);
 unsigned int ComputeMinWork(unsigned int nBase, int64 nTime);
 int GetNumBlocksOfPeers();
@@ -128,6 +130,7 @@ uint256 WantedByOrphan(const CBlock* pblockOrphan);
 const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfStake);
 void IncaKoinMiner(CWallet *pwallet, bool fProofOfStake);
 void ResendWalletTransactions();
+int GetCoinbaseMaturity(unsigned int nTime);
 
 bool GetWalletFile(CWallet* pwallet, std::string &strWalletFileOut);
 
@@ -1241,7 +1244,45 @@ public:
         bnTarget.SetCompact(nBits);
         if (bnTarget <= 0)
             return 0;
-        return (IsProofOfStake()? (CBigNum(1)<<256) / (bnTarget+1) : 1);
+
+        CBigNum bnTrust = 0;
+        if (nTime < FORKTIME_REORG_PROTO_CHANGES)
+            bnTrust = (IsProofOfStake()? (CBigNum(1)<<256) / (bnTarget+1) : 1);
+        else
+        {
+            // return much less trust for proof of work blocks, but still enough value that it actually
+            // contributes to the chain trust score
+            int nPoWBlocks = 0;
+            if (IsProofOfStake())
+                bnTrust = (CBigNum(1)<<256) / (bnTarget+1);
+            else
+            {
+                if(!pprev)
+                    return 0;
+
+                // diminish chain trust calculation for long PoW only periods
+                nPoWBlocks = 1;
+                CBlockIndex* pIndexPrev = pprev;
+                while (pIndexPrev->pprev)
+                {
+                    if (pIndexPrev->IsProofOfStake())
+                        break;
+
+                    nPoWBlocks++;
+                    if (nPoWBlocks >= 100)
+                        break;
+
+                    pIndexPrev = pIndexPrev->pprev;
+                }
+
+                bnTrust = (CBigNum(1)<<242) / (bnTarget+1);
+                bnTrust /= nPoWBlocks;
+            }
+            if (bnTrust < 1)
+                bnTrust = 1;
+        }
+
+        return bnTrust;
     }
 
     bool IsInMainChain() const
