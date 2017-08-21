@@ -52,6 +52,7 @@ unsigned int nStakeTargetSpacing = 60; // 60 seconds block spacing
 const int64 nChainStartTime = 1377538838;
 const int64 nTestNetStartTime = nChainStartTime; // 2013-08-03 18:00:00 GMT
 int nCoinbaseMaturity = 4980; // mining need 5000 confirm
+int nCoinbaseMaturity2 = 1000;
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
 CBigNum bnBestChainTrust = 0;
@@ -792,7 +793,13 @@ int CMerkleTx::GetBlocksToMaturity() const
 {
     if (!(IsCoinBase() || IsCoinStake()))
         return 0;
-    return max(0, (nCoinbaseMaturity+20) - GetDepthInMainChain());
+
+    // Find the block it claims to be in
+    map<uint256, CBlockIndex*>::iterator mi = mapBlockIndex.find(hashBlock);
+    if (mi == mapBlockIndex.end())
+        return GetCoinbaseMaturity(GetAdjustedTime()) - GetDepthInMainChain();
+
+    return max(0, (GetCoinbaseMaturity((*mi).second->GetBlockTime())+20) - GetDepthInMainChain());
 }
 
 
@@ -886,12 +893,13 @@ bool GetTransaction(const uint256 &hash, CTransaction &tx, uint256 &hashBlock)
     return false;
 }
 
-
-
-
-
-
-
+int GetCoinbaseMaturity(unsigned int nTime)
+{
+    if(nTime > FORKTIME_REORG_PROTO_CHANGES)
+        return nCoinbaseMaturity2;
+    else
+        return nCoinbaseMaturity;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -948,10 +956,12 @@ uint256 WantedByOrphan(const CBlock* pblockOrphan)
 }
 
 // miner's coin base reward based on nBits
-int64 GetProofOfWorkReward(int nHeight, int64 nFees, uint256 prevHash)
+int64 GetProofOfWorkReward(int nHeight, int64 nFees, uint256 prevHash, unsigned int nTime)
 {
+    if(nTime > FORKTIME_REORG_PROTO_CHANGES)
+        return 100 * COIN;
 
-int64 nSubsidy = 420 * COIN;
+    int64 nSubsidy = 420 * COIN;
 
     nSubsidy >>= (nHeight / 280000); // Halving roughly every 6 months
     return nSubsidy + nFees;
@@ -1370,7 +1380,7 @@ bool CTransaction::ConnectInputs(CTxDB& txdb, MapPrevTx inputs,
 
             // If prev is coinbase or coinstake, check that it's matured
             if (txPrev.IsCoinBase() || txPrev.IsCoinStake())
-                for (const CBlockIndex* pindex = pindexBlock; pindex && pindexBlock->nHeight - pindex->nHeight < nCoinbaseMaturity; pindex = pindex->pprev)
+                for (const CBlockIndex* pindex = pindexBlock; pindex && pindexBlock->nHeight - pindex->nHeight < GetCoinbaseMaturity(pindex->GetBlockTime()); pindex = pindex->pprev)
                     if (pindex->nBlockPos == txindex.pos.nBlockPos && pindex->nFile == txindex.pos.nFile)
                         return error("ConnectInputs() : tried to spend %s at depth %d", txPrev.IsCoinBase() ? "coinbase" : "coinstake", pindexBlock->nHeight - pindex->nHeight);
 
@@ -1648,7 +1658,7 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
     if(pindex->pprev)
     {
         prevHash = pindex->pprev->GetBlockHash();
-        if (vtx[0].GetValueOut() > GetProofOfWorkReward(pindex->nHeight, nFees, prevHash))
+        if (vtx[0].GetValueOut() > GetProofOfWorkReward(pindex->nHeight, nFees, prevHash, pindex->GetBlockTime()))
             return false;
     }
 
@@ -2003,6 +2013,10 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
         pindexNew->pprev = (*miPrev).second;
         pindexNew->nHeight = pindexNew->pprev->nHeight + 1;
     }
+
+    // IncaKoin: restrict maximum reorganization depth
+    if (pindexNew->GetBlockTime() > FORKTIME_REORG_PROTO_CHANGES && nBestHeight - pindexNew->nHeight > MAX_REORG_DEPTH)
+        return error("AddToBlockIndex() : %s failed because reorg of %d blocks is too deep", hash.GetHex(), nBestHeight - pindexNew->nHeight);
 
     // ppcoin: compute chain trust score
     pindexNew->bnChainTrust = (pindexNew->pprev ? pindexNew->pprev->bnChainTrust : 0) + pindexNew->GetBlockTrust();
@@ -4284,7 +4298,7 @@ CBlock* CreateNewBlock(CWallet* pwallet, bool fProofOfStake)
             printf("CreateNewBlock(): total size %"PRI64u"\n", nBlockSize);
 
         if (pblock->IsProofOfWork())
-            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight+1, nFees, pindexPrev->GetBlockHash());
+            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight+1, nFees, pindexPrev->GetBlockHash(), pblock->GetBlockTime());
 
 
         // Fill in header
