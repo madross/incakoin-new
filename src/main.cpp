@@ -2016,7 +2016,7 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos)
 
     // IncaKoin: restrict maximum reorganization depth
     if (pindexNew->GetBlockTime() > FORKTIME_REORG_PROTO_CHANGES && nBestHeight - pindexNew->nHeight > MAX_REORG_DEPTH)
-        return error("AddToBlockIndex() : %s failed because reorg of %d blocks is too deep", hash.GetHex(), nBestHeight - pindexNew->nHeight);
+        return error("AddToBlockIndex() : %s failed because reorg of %d blocks is too deep", hash.GetHex().c_str(), nBestHeight - pindexNew->nHeight);
 
     // ppcoin: compute chain trust score
     pindexNew->bnChainTrust = (pindexNew->pprev ? pindexNew->pprev->bnChainTrust : 0) + pindexNew->GetBlockTrust();
@@ -4299,7 +4299,7 @@ CBlock* CreateNewBlock(CWallet* pwallet, bool fProofOfStake)
             printf("CreateNewBlock(): total size %"PRI64u"\n", nBlockSize);
 
         if (pblock->IsProofOfWork())
-            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight+1, nFees, pindexPrev->GetBlockHash(), pblock->GetBlockTime());
+            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight+1, nFees, pindexPrev->GetBlockHash(), GetAdjustedTime());
 
 
         // Fill in header
