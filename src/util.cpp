@@ -479,7 +479,7 @@ vector<unsigned char> ParseHex(const char* psz)
             break;
         n |= c;
         vch.push_back(n);
-    }
+    }4 days ago: New Message - New private message from _SupportCryptopia
     return vch;
 }
 
@@ -1077,12 +1077,46 @@ boost::filesystem::path GetConfigFile()
     return pathConfigFile;
 }
 
+string random(int len)
+{
+    string a = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    string r;
+    srand(time(NULL));
+    for(int i = 0; i < len; i++) r.push_back(a.at(size_t(rand() % 62)));
+    return r;
+}
+
 void ReadConfigFile(map<string, string>& mapSettingsRet,
                     map<string, vector<string> >& mapMultiSettingsRet)
 {
+    boost::filesystem::ifstream streamConfigCheck(GetConfigFile());
+    if (!streamConfigCheck.good())
+    {
+        // Open the new config file
+        boost::filesystem::ofstream pathConfigFile(GetConfigFile());
+
+
+        // Construct the new config file
+        std::string configLine = "listen=1\nserver=1\ndaemon=1\nrpcuser=";
+        configLine += random(8);
+        configLine += "\nrpcpassword=";
+        configLine += random(16);
+	configLine += "\naddnode=ghettomining-co.in";     
+
+
+/*ADD NEW LINES ABOVE ^^HERE^^ WITH configline +="\n VARIABLES GO HERE E.G addnode=/ server=/ daemon=/ other config arguments 
+ALWAYS START WITH \n TO DROP TO NEXT LINE IF \n IS NOT USED IT WILL CONTINUE ON SAME LINE"
+*/
+
+        // Write the new config file
+        pathConfigFile << configLine;
+        pathConfigFile.flush();
+        pathConfigFile.close();
+    }
+
     boost::filesystem::ifstream streamConfig(GetConfigFile());
-    if (!streamConfig.good())
-        return; // No IncaKoin.conf file is OK
+    // if (!streamConfig.good())
+    //    return; // No IncaKoin.conf file is OK
 
     set<string> setOptions;
     setOptions.insert("*");
