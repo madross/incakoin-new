@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = IncaKoin-qt
 macx:TARGET = "IncaKoin-Qt"
-VERSION = 1.5.0.0
+VERSION = 1.5.1.0
 INCLUDEPATH += src src/json src/qt
 QT += network core gui
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
