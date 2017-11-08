@@ -479,7 +479,7 @@ vector<unsigned char> ParseHex(const char* psz)
             break;
         n |= c;
         vch.push_back(n);
-    }4 days ago: New Message - New private message from _SupportCryptopia
+    }
     return vch;
 }
 
