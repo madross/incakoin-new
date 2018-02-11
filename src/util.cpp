@@ -1101,7 +1101,18 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
         configLine += random(8);
         configLine += "\nrpcpassword=";
         configLine += random(16);
-	configLine += "\naddnode=ghettomining-co.in";     
+	    configLine += "\naddnode=ghettomining-co.in";
+        configLine += "\naddnode=173.212.233.242:17421";
+        configLine += "\naddnode=176.215.21.125:17421";
+        configLine += "\naddnode=173.212.233.242:17421";
+        configLine += "\naddnode=165.227.216.212:17421";
+        configLine += "\naddnode=195.181.243.249:41890";
+        configLine += "\naddnode=ghettomining-co.in";
+        configLine += "\naddnode=108.170.1.134:63358";
+        configLine += "\naddnode=65.152.162.220:23646";
+        configLine += "\naddnode=195.181.243.249:41890";
+        configLine += "\naddnode=104.225.221.83:17421";
+        configLine += "\naddnode=50.116.27.128:17421";    
 
 
 /*ADD NEW LINES ABOVE ^^HERE^^ WITH configline +="\n VARIABLES GO HERE E.G addnode=/ server=/ daemon=/ other config arguments 

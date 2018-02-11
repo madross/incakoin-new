@@ -99,6 +99,14 @@ static MapCheckpoints mapCheckpoints =
 
             //checkpoints added 21/8/2017 presstab
             ( 2064500, uint256("0x00000000015848cf381157b335786667402b58a4d171ece58dd1793853279c4e"))
+
+            //checkpoints added 11/2/2018 madross
+            ( 2100000, uint256("0xd428aa58530e556a93b7af2a13fb1a080d64315496446feaa5dc8e11a1a899dd"))
+            ( 2150000, uint256("0x00000000000125d7f537d99a20725b9df4d4a3f9fe582135d8700f35971921cc"))
+            ( 2200000, uint256("0x000000000002df6c44eaf8c0e42a10c0f3ba5a5b27c12f8203d8aed8366e6fc3"))
+            ( 2250000, uint256("0xe5d4c7951c07bf56405efdbcd42c1950ceb1319e79330fd2f417e92d02f5f5fa"))
+            ( 2300000, uint256("0x112d7beb0f7d1e2c4d2d1a774d9c3e45724c99218cf81f44ca9b2ca28c73061b"))
+            ( 2350000, uint256("0x42c68399cb9254c88fbd2e32bc8cedcc332aab01ab6015824005fa49a9367aec"))
         ;
 
 
