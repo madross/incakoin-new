@@ -2090,10 +2090,11 @@ set< set<CTxDestination> > CWallet::GetAddressGroupings()
 // check 'spent' consistency between wallet and txindex
 // fix wallet spent state according to txindex
 // remove orphan Coinbase and Coinstake
-void CWallet::FixSpentCoins(int& nMismatchFound, int64& nBalanceInQuestion, bool fCheckOnly)
+void CWallet::FixSpentCoins(int& nMismatchFound, int64& nBalanceInQuestion, int& nOrphansFound, bool fCheckOnly)
 {
     nMismatchFound = 0;
     nBalanceInQuestion = 0;
+    nOrphansFound = 0;
 
     LOCK(cs_wallet);
     vector<CWalletTx*> vCoins;
@@ -2111,6 +2112,7 @@ void CWallet::FixSpentCoins(int& nMismatchFound, int64& nBalanceInQuestion, bool
             continue;
         for (unsigned int n=0; n < pcoin->vout.size(); n++)
         {
+            bool fUpdated = false;
             if (IsMine(pcoin->vout[n]) && pcoin->IsSpent(n) && (txindex.vSpent.size() <= n || txindex.vSpent[n].IsNull()))
             {
                 printf("FixSpentCoins found lost coin %strk %s[%d], %s\n",
@@ -2119,6 +2121,7 @@ void CWallet::FixSpentCoins(int& nMismatchFound, int64& nBalanceInQuestion, bool
                 nBalanceInQuestion += pcoin->vout[n].nValue;
                 if (!fCheckOnly)
                 {
+                    fUpdated = true;
                     pcoin->MarkUnspent(n);
                     pcoin->WriteToDisk();
                 }
@@ -2131,6 +2134,7 @@ void CWallet::FixSpentCoins(int& nMismatchFound, int64& nBalanceInQuestion, bool
                 nBalanceInQuestion += pcoin->vout[n].nValue;
                 if (!fCheckOnly)
                 {
+                    fUpdated = true;
                     pcoin->MarkSpent(n);
                     pcoin->WriteToDisk();
                 }
