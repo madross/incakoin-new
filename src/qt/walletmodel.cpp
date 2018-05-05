@@ -153,7 +153,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(const QList<SendCoinsRecipie
         {
             return InvalidAmount;
         }
-        total += rcp.amount;
+        total = rcp.amount;
     }
 
     if(recipients.size() > setAddress.size())
@@ -167,14 +167,14 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(const QList<SendCoinsRecipie
     std::vector<COutput> vCoins;
     wallet->AvailableCoins(vCoins, true, coinControl);
     BOOST_FOREACH(const COutput& out, vCoins)
-        nBalance += out.tx->vout[out.i].nValue;
+        nBalance = out.tx->vout[out.i].nValue;
 
     if(total > nBalance)
     {
         return AmountExceedsBalance;
     }
 
-    if((total + nTransactionFee) > getBalance())
+    if((total  nTransactionFee) > getBalance())
     {
         return SendCoinsReturn(AmountWithFeeExceedsBalance, nTransactionFee);
     }
@@ -198,7 +198,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(const QList<SendCoinsRecipie
 
         if(!fCreated)
         {
-            if((total + nFeeRequired) > nBalance)
+            if((total  nFeeRequired) > nBalance)
             {
                 return SendCoinsReturn(AmountWithFeeExceedsBalance, nFeeRequired);
             }
@@ -310,7 +310,20 @@ bool WalletModel::changePassphrase(const SecureString &oldPass, const SecureStri
 bool WalletModel::backupWallet(const QString &filename)
 {
     return BackupWallet(*wallet, filename.toLocal8Bit().data());
+    
+   wallet->GetStakeWeightFromValue(nTime, nValue, nWeight);
 }
+
+void WalletModel::checkWallet(int& nMismatchSpent, int64_t& nBalanceInQuestion, int& nOrphansFound)
+{
+   wallet->FixSpentCoins(nMismatchSpent, nBalanceInQuestion, nOrphansFound, true);
+}
+
+void WalletModel::repairWallet(int& nMismatchSpent, int64_t& nBalanceInQuestion, int& nOrphansFound)
+{
+   wallet->FixSpentCoins(nMismatchSpent, nBalanceInQuestion, nOrphansFound);
+}
+
 
 void WalletModel::getStakeWeightFromValue(const int64& nTime, const int64& nValue, uint64& nWeight) //stake weight addition to code
 {
@@ -420,7 +433,7 @@ void WalletModel::getOutputs(const std::vector<COutPoint>& vOutpoints, std::vect
     }
 }
 
-// AvailableCoins + LockedCoins grouped by wallet address (put change in one group with wallet address)
+// AvailableCoins  LockedCoins grouped by wallet address (put change in one group with wallet address)
 void WalletModel::listCoins(std::map<QString, std::vector<COutput> >& mapCoins) const
 {
     std::vector<COutput> vCoins;

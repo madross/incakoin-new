@@ -93,7 +93,7 @@ IncaKoinGUI::IncaKoinGUI(QWidget *parent):
     nWeight(0)
 {
     resize(850, 550);
-    setWindowTitle(tr("IncaKoin") + " - " + tr("Wallet"));
+    setWindowTitle(tr("IncaKoin")  " - "  tr("Wallet"));
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":icons/IncaKoin"));
     setWindowIcon(QIcon(":icons/IncaKoin"));
@@ -251,31 +251,31 @@ void IncaKoinGUI::createActions()
     overviewAction = new QAction(QIcon(":/icons/overview"), tr("&Overview"), this);
     overviewAction->setToolTip(tr("Show general overview of wallet"));
     overviewAction->setCheckable(true);
-    overviewAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_1));
+    overviewAction->setShortcut(QKeySequence(Qt::ALT  Qt::Key_1));
     tabGroup->addAction(overviewAction);
 
     sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&Send coins"), this);
     sendCoinsAction->setToolTip(tr("Send coins to a IncaKoin address"));
     sendCoinsAction->setCheckable(true);
-    sendCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_2));
+    sendCoinsAction->setShortcut(QKeySequence(Qt::ALT  Qt::Key_2));
     tabGroup->addAction(sendCoinsAction);
 
     receiveCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&Receive coins"), this);
     receiveCoinsAction->setToolTip(tr("Show the list of addresses for receiving payments"));
     receiveCoinsAction->setCheckable(true);
-    receiveCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_3));
+    receiveCoinsAction->setShortcut(QKeySequence(Qt::ALT  Qt::Key_3));
     tabGroup->addAction(receiveCoinsAction);
 
     historyAction = new QAction(QIcon(":/icons/history"), tr("&Transactions"), this);
     historyAction->setToolTip(tr("Browse transaction history"));
     historyAction->setCheckable(true);
-    historyAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_4));
+    historyAction->setShortcut(QKeySequence(Qt::ALT  Qt::Key_4));
     tabGroup->addAction(historyAction);
 
     addressBookAction = new QAction(QIcon(":/icons/address-book"), tr("&Address Book"), this);
     addressBookAction->setToolTip(tr("Edit the list of stored addresses and labels"));
     addressBookAction->setCheckable(true);
-    addressBookAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));
+    addressBookAction->setShortcut(QKeySequence(Qt::ALT  Qt::Key_5));
     tabGroup->addAction(addressBookAction);
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -291,7 +291,7 @@ void IncaKoinGUI::createActions()
 
     quitAction = new QAction(QIcon(":/icons/quit"), tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
-    quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
+    quitAction->setShortcut(QKeySequence(Qt::CTRL  Qt::Key_Q));
     quitAction->setMenuRole(QAction::QuitRole);
     aboutAction = new QAction(QIcon(":/icons/IncaKoin"), tr("&About IncaKoin"), this);
     aboutAction->setToolTip(tr("Show information about IncaKoin"));
@@ -330,6 +330,7 @@ void IncaKoinGUI::createActions()
     connect(optionsAction, SIGNAL(triggered()), this, SLOT(optionsClicked()));
     connect(toggleHideAction, SIGNAL(triggered()), this, SLOT(toggleHidden()));
     connect(encryptWalletAction, SIGNAL(triggered(bool)), this, SLOT(encryptWallet(bool)));
+    connect(checkWalletAction, SIGNAL(triggered()), this, SLOT(checkWallet()));
     connect(backupWalletAction, SIGNAL(triggered()), this, SLOT(backupWallet()));
     connect(changePassphraseAction, SIGNAL(triggered()), this, SLOT(changePassphrase()));
     connect(unlockWalletAction, SIGNAL(triggered()), this, SLOT(unlockWallet()));
@@ -358,7 +359,7 @@ void IncaKoinGUI::createMenuBar()
     file->addSeparator();
     file->addAction(quitAction);
 
-    QMenu *settings = appMenuBar->addMenu(tr("&Settings"));
+    QMenu *settings = appMenuBar->addMenu(tr("&Tools"));
     settings->addAction(optionsAction);
 
     QMenu *wallet = appMenuBar->addMenu(tr("&Wallet"));
@@ -404,7 +405,7 @@ void IncaKoinGUI::setClientModel(ClientModel *clientModel)
         // Replace some strings and icons, when using the testnet
         if(clientModel->isTestNet())
         {
-            setWindowTitle(windowTitle() + QString(" ") + tr("[testnet]"));
+            setWindowTitle(windowTitle()  QString(" ")  tr("[testnet]"));
 #ifndef Q_OS_MAC
             qApp->setWindowIcon(QIcon(":icons/IncaKoin_testnet"));
             setWindowIcon(QIcon(":icons/IncaKoin_testnet"));
@@ -413,7 +414,7 @@ void IncaKoinGUI::setClientModel(ClientModel *clientModel)
 #endif
             if(trayIcon)
             {
-                trayIcon->setToolTip(tr("IncaKoin client") + QString(" ") + tr("[testnet]"));
+                trayIcon->setToolTip(tr("IncaKoin client")  QString(" ")  tr("[testnet]"));
                 trayIcon->setIcon(QIcon(":/icons/toolbar_testnet"));
                 toggleHideAction->setIcon(QIcon(":/icons/toolbar_testnet"));
             }
@@ -582,7 +583,7 @@ void IncaKoinGUI::setNumBlocks(int count, int nTotalBlocks)
     }
 
 
-    tooltip = tr("Current difficulty is %1.").arg(clientModel->GetDifficulty()) + QString("<br>") + tooltip;
+    tooltip = tr("Current difficulty is %1.").arg(clientModel->GetDifficulty())  QString("<br>")  tooltip;
 
     QDateTime lastBlockDate = clientModel->getLastBlockDate();
     int secs = lastBlockDate.secsTo(QDateTime::currentDateTime());
@@ -613,14 +614,14 @@ void IncaKoinGUI::setNumBlocks(int count, int nTotalBlocks)
     // Set icon state: spinning if catching up, tick otherwise
     if(secs < 90*60 && count >= nTotalBlocks)
     {
-        tooltip = tr("Up to date") + QString(".<br>") + tooltip;
+        tooltip = tr("Up to date")  QString(".<br>")  tooltip;
         labelBlocksIcon->setPixmap(QIcon(":/icons/synced").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
 
         overviewPage->showOutOfSyncWarning(false);
     }
     else
     {
-        tooltip = tr("Catching up...") + QString("<br>") + tooltip;
+        tooltip = tr("Catching up...")  QString("<br>")  tooltip;
         labelBlocksIcon->setMovie(syncIconMovie);
         syncIconMovie->start();
 
@@ -629,12 +630,12 @@ void IncaKoinGUI::setNumBlocks(int count, int nTotalBlocks)
 
     if(!text.isEmpty())
     {
-        tooltip += QString("<br>");
-        tooltip += tr("Last received block was generated %1.").arg(text);
+        tooltip = QString("<br>");
+        tooltip = tr("Last received block was generated %1.").arg(text);
     }
 
     // Don't word-wrap this (fixed-width) tooltip
-    tooltip = QString("<nobr>") + tooltip + QString("</nobr>");
+    tooltip = QString("<nobr>")  tooltip  QString("</nobr>");
 
     labelBlocksIcon->setToolTip(tooltip);
     progressBarLabel->setToolTip(tooltip);
@@ -824,7 +825,7 @@ void IncaKoinGUI::dropEvent(QDropEvent *event)
         foreach(const QUrl &uri, uris)
         {
             if (sendCoinsPage->handleURI(uri.toString()))
-                nValidUrisFound++;
+                nValidUrisFound;
         }
 
         // if valid URIs were found
@@ -900,6 +901,65 @@ void IncaKoinGUI::encryptWallet(bool status)
     dlg.exec();
 
     setEncryptionStatus(walletModel->getEncryptionStatus());
+}
+
+void IncaKoinGUI::checkWallet()
+{
+
+    int nMismatchSpent;
+    int64_t nBalanceInQuestion;
+    int nOrphansFound;
+
+    if(!walletModel)
+        return;
+
+    // Check the wallet as requested by user
+    walletModel->checkWallet(nMismatchSpent, nBalanceInQuestion, nOrphansFound);
+
+    if (nMismatchSpent == 0 && nOrphansFound == 0)
+        QString strMessage =
+       tr("Check Wallet Information"),
+                tr("Wallet passed integrity test!\n"
+                   "Nothing found to fix.");
+  else
+       notificator->notify(Notificator::Warning, //tr("URI handling"), tr("URI can not be parsed! This can be caused by an invalid PayCon address or malformed URI parameters."));
+           tr("Check Wallet Information"), tr("Wallet failed integrity test!\n\n"
+                  "Mismatched coin(s) found: %1.\n"
+                  "Amount in question: %2.\n"
+                  "Orphans found: %3.\n\n"
+                  "Please backup wallet and run repair wallet.\n")
+                       .arg(nMismatchSpent)
+                        .arg(BitcoinUnits::formatWithUnit(walletModel->getOptionsModel()->getDisplayUnit(), nBalanceInQuestion,true))
+                        .arg(nOrphansFound));
+}
+
+void IncaKoinGUI::repairWallet()
+{
+    int nMismatchSpent;
+    int64_t nBalanceInQuestion;
+    int nOrphansFound;
+
+    if(!walletModel)
+        return;
+
+    // Repair the wallet as requested by user
+    walletModel->repairWallet(nMismatchSpent, nBalanceInQuestion, nOrphansFound);
+
+    if (nMismatchSpent == 0 && nOrphansFound == 0)
+       notificator->notify(Notificator::Warning,
+      tr("Repair Wallet Information"),
+               tr("Wallet passed integrity test!\n"
+                  "Nothing found to fix."));
+    else
+       notificator->notify(Notificator::Warning,
+       tr("Repair Wallet Information"),
+               tr("Wallet failed integrity test and has been repaired!\n"
+                  "Mismatched coin(s) found: %1\n"
+                  "Amount affected by repair: %2\n"
+                  "Orphans removed: %3\n")
+                        .arg(nMismatchSpent)
+                        .arg(BitcoinUnits::formatWithUnit(walletModel->getOptionsModel()->getDisplayUnit(), nBalanceInQuestion,true))
+                        .arg(nOrphansFound));
 }
 
 void IncaKoinGUI::backupWallet()
