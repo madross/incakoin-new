@@ -195,9 +195,9 @@ private slots:
     /** Encrypt the wallet */
     void encryptWallet(bool status);
     /** Check the wallet */
-+   void checkWallet();
-+   /** Repair the wallet */
-+   void repairWallet();
+    void checkWallet();
+    /** Repair the wallet */
+    void repairWallet();
     /** Backup the wallet */
     void backupWallet();
     /** Change encrypted wallet passphrase */
