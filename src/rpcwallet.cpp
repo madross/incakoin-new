@@ -1693,7 +1693,7 @@ Value checkwallet(const Array& params, bool fHelp)
     int nMismatchSpent;
     int64 nBalanceInQuestion;
     int nOrphansFound;
-    pwalletMain->FixSpentCoins(nMismatchSpent, nBalanceInQuestion, nOrphansFound, true);
+    pwalletMain->FixSpentCoins(nMismatchSpent, nBalanceInQuestion, nOrphansFound);
     Object result;
     if (nMismatchSpent == 0 && nOrphansFound == 0)
         result.push_back(Pair("wallet check passed", true));
